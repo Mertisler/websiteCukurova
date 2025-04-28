@@ -42,23 +42,8 @@ export default function AnnouncementDetail({ params }) {
           }
         }
         setLoading(false);
-      } catch (error) {
-        console.error('Duyuru detayları yüklenirken hata oluştu:', error);
-        
-        // API hatası durumunda localStorage'ı kontrol et
-        try {
-          const localAnnouncements = JSON.parse(localStorage.getItem('announcements') || '[]');
-          const localAnnouncement = localAnnouncements.find(a => a.id.toString() === id.toString());
-          if (localAnnouncement) {
-            setAnnouncement(localAnnouncement);
-          } else {
-            setError('Duyuru detayları yüklenirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.');
-          }
-        } catch (localError) {
-          setError('Duyuru detayları yüklenirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.');
-        }
-        
-        setLoading(false);
+      } catch {
+        return <div>Duyuru yüklenirken bir hata oluştu</div>;
       }
     };
 

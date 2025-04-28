@@ -1,9 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/components/Header';
+import { Suspense } from 'react';
+import AnnouncementsList from '@/components/AnnouncementsList';
+import VideosList from '@/components/VideosList';
+import Loading from '@/components/Loading';
 
 export default function Home() {
   const [announcements, setAnnouncements] = useState([]);

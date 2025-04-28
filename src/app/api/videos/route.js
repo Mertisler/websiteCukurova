@@ -81,10 +81,10 @@ export async function GET() {
 // Yeni video ekle
 export async function POST(request) {
   try {
-    const body = await request.json();
+    const data = await request.json();
     // video_url veya videoUrl olabilir, her ikisini de kontrol et
-    const title = body.title;
-    const videoUrl = body.videoUrl || body.video_url;
+    const title = data.title;
+    const videoUrl = data.videoUrl || data.video_url;
 
     if (!title || !videoUrl) {
       return NextResponse.json(
@@ -96,16 +96,16 @@ export async function POST(request) {
     const videos = getVideos();
     
     // Normalize edilmiş video verisi oluştur
-    const normalizedData = normalizeVideoData(body);
+    const normalizedData = normalizeVideoData(data);
     
     const newVideo = {
-      id: body.id || uuidv4(),
+      id: data.id || uuidv4(),
       title,
       videoUrl,
-      description: body.description || "",
-      thumbnail_url: body.thumbnail_url || "",
+      description: data.description || "",
+      thumbnail_url: data.thumbnail_url || "",
       youtubeId: getYoutubeIdFromUrl(videoUrl),
-      date: body.date || new Date().toISOString(),
+      date: data.date || new Date().toISOString(),
     };
 
     videos.push(newVideo);

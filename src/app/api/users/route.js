@@ -5,10 +5,12 @@ import { NextResponse } from 'next/server';
 // GET tüm kullanıcıları getirir
 export async function GET() {
   try {
-    return NextResponse.json(
-      { message: 'Bu API artık kullanılmıyor. Lütfen /api/announcements API rotasını kullanın.' }, 
-      { status: 301 }
-    );
+    const users = await executeQuery({ 
+      query: 'SELECT * FROM users',
+      values: []
+    });
+    
+    return NextResponse.json({ users }, { status: 200 });
   } catch {
     return NextResponse.json({ success: false, message: 'Kullanıcılar alınamadı' }, { status: 500 });
   }
