@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { use } from 'react';
 import Header from '@/components/Header';
 
@@ -36,8 +35,8 @@ export default function AnnouncementDetail({ params }) {
             } else {
               setError('Duyuru bulunamadı');
             }
-          } catch (localError) {
-            console.error('LocalStorage hatası:', localError);
+          } catch {
+            console.error('LocalStorage hatası');
             setError('Duyuru bulunamadı');
           }
         }
@@ -130,11 +129,9 @@ export default function AnnouncementDetail({ params }) {
                 {/* Duyuru görseli */}
                 {announcement.image_url && (
                   <div className="mb-8 rounded-lg overflow-hidden shadow-md">
-                    <Image 
+                    <img 
                       src={announcement.image_url} 
                       alt={announcement.title}
-                      width={800}
-                      height={400}
                       className="w-full max-h-96 object-cover"
                       onError={(e) => {
                         e.target.onerror = null;

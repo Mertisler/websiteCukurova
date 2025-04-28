@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
-import Image from 'next/image';
 
 export default function Announcements() {
   const [announcements, setAnnouncements] = useState([]);
@@ -18,42 +17,12 @@ export default function Announcements() {
           throw new Error('Duyurular alınamadı');
         }
         const data = await response.json();
-        if (data && data.announcements) {
-          setAnnouncements(data.announcements);
-          setLoading(false);
-        } else {
-          // API doğru yanıt döndüremiyor, localStorage kontrolü yap
-          try {
-            const localAnnouncements = JSON.parse(localStorage.getItem('announcements') || '[]');
-            if (localAnnouncements && localAnnouncements.length > 0) {
-              setAnnouncements(localAnnouncements);
-            } else {
-              setAnnouncements([]);
-            }
-          } catch (error) {
-            console.error('LocalStorage hatası:', error);
-            setAnnouncements([]);
-          }
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Duyurular yüklenirken hata oluştu:', error);
-        
-        // API hatası durumunda localStorage'a düş
-        try {
-          const localAnnouncements = JSON.parse(localStorage.getItem('announcements') || '[]');
-          if (localAnnouncements && localAnnouncements.length > 0) {
-            setAnnouncements(localAnnouncements);
-            setError(null); // localStorage'dan veriler geldiği için hatayı kaldır
-          } else {
-            setError('Duyurular yüklenirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.');
-          }
-        } catch (error) {
-          setError('Duyurular yüklenirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.');
-        }
-        
-        setLoading(false);
+        setAnnouncements(data.announcements);
+      } catch {
+        console.error('Duyuru yükleme hatası');
+        setAnnouncements([]);
       }
+      setLoading(false);
     };
 
     fetchAnnouncements();
@@ -121,11 +90,9 @@ export default function Announcements() {
                       {announcement.image_url && (
                         <div className="md:w-2/5 overflow-hidden">
                           <div className="h-full relative">
-                            <Image 
+                            <img 
                               src={announcement.image_url} 
                               alt={announcement.title}
-                              width={500}
-                              height={300}
                               className="w-full h-64 md:h-full object-cover transition-transform duration-500 group-hover:scale-105"
                               onError={(e) => {
                                 e.target.onerror = null;
