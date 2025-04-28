@@ -375,7 +375,7 @@ export default function AdminPage() {
         setStatusMessage({ message: "", isError: false });
       }, 5000);
     }
-  }, [fetchAnnouncements]);
+  }, [setupDatabase, fetchAnnouncements]);
   
   // Manuel senkronizasyon fonksiyonu
   const manualSync = async () => {

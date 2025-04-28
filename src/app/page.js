@@ -110,7 +110,7 @@ export default function Home() {
               <div className="md:w-1/2">
                 <h3 className="text-xl font-bold text-amber-700 mb-3">Vizyonumuz</h3>
                 <p className="text-gray-700 mb-6 italic border-l-4 border-amber-500 pl-4 py-2">
-                  "Herkesin potansiyelini istediği şekilde gerçekleştirebildiği; engellerin değil, hayallerin konuşulduğu bir birliktelik oluşturmaktır."
+                  &quot;Herkesin potansiyelini istediği şekilde gerçekleştirebildiği; engellerin değil, hayallerin konuşulduğu bir birliktelik oluşturmaktır.&quot;
                 </p>
                 
                 <h3 className="text-xl font-bold text-amber-700 mb-3">Misyonumuz</h3>
