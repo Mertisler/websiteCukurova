@@ -450,58 +450,23 @@ export default function AdminPage() {
     }
   };
   
-  // Veritabanı kurulum fonksiyonu
-  const setupDatabase = async () => {
+  const setupDatabase = useCallback(async () => {
     try {
       setSetupLoading(true);
-      
-      // Veritabanı kurulum API'sini çağır
       const response = await fetch('/api/db-setup');
-      
-      if (!response.ok) {
-        throw new Error('Veritabanı kurulum isteği başarısız oldu: ' + response.statusText);
-      }
-      
+      if (!response.ok) throw new Error('Veritabanı kurulumu başarısız oldu');
       const data = await response.json();
-      
       if (data.success) {
-        setStatusMessage({
-          message: data.message || 'Uzak veritabanı bağlantısı ve tablo kontrolü başarıyla tamamlandı.',
-          isError: false
-        });
-        
-        // Veritabanı bilgilerini göster
-        console.log('Bağlantı detayları:', data.details);
-        
-        // Otomatik senkronizasyonu başlat
-        await manualSync();
-      } else {
-        setStatusMessage({
-          message: data.message || 'Veritabanı kurulumu sırasında bir hata oluştu.',
-          isError: true
-        });
+        setDbStatus('connected');
+        setStatusMessage({ message: 'Veritabanı başarıyla kuruldu', isError: false });
       }
-      
-      // 5 saniye sonra durum mesajını temizle
-      setTimeout(() => {
-        setStatusMessage({ message: "", isError: false });
-      }, 5000);
-      
-    } catch (error) {
-      console.error("Veritabanı kurulumu sırasında hata:", error);
-      setStatusMessage({
-        message: "Veritabanı kurulumu sırasında bir hata oluştu: " + error.message,
-        isError: true
-      });
-      
-      // 5 saniye sonra durum mesajını temizle
-      setTimeout(() => {
-        setStatusMessage({ message: "", isError: false });
-      }, 5000);
+    } catch {
+      setDbStatus('error');
+      setStatusMessage({ message: 'Veritabanı kurulumu başarısız oldu', isError: true });
     } finally {
       setSetupLoading(false);
     }
-  };
+  }, []);
   
   // Veritabanı durumunu kontrol eden fonksiyon
   const checkDatabaseStatus = async () => {
@@ -850,9 +815,11 @@ export default function AdminPage() {
                           </div>
                           {announcement.image_url && (
                             <div className="mt-2 mb-3">
-                              <img 
+                              <Image 
                                 src={announcement.image_url} 
                                 alt={announcement.title}
+                                width={500}
+                                height={300}
                                 className="rounded-lg max-h-48 object-cover"
                                 onError={(e) => {
                                   e.target.onerror = null;

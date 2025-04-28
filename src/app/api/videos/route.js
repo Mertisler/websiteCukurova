@@ -73,11 +73,8 @@ export async function GET() {
     // Her bir videoyu normalize et
     const normalizedVideos = videos.map(normalizeVideoData);
     return NextResponse.json({ success: true, videos: normalizedVideos });
-  } catch (error) {
-    return NextResponse.json(
-      { success: false, message: 'Videolar getirilirken bir hata oluştu.' },
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ success: false, message: 'Video işlemleri başarısız oldu' }, { status: 500 });
   }
 }
 
@@ -122,12 +119,8 @@ export async function POST(request) {
         { status: 500 }
       );
     }
-  } catch (error) {
-    console.error('Video eklenirken hata:', error);
-    return NextResponse.json(
-      { success: false, message: 'Video eklenirken bir hata oluştu.' },
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ success: false, message: 'Video işlemleri başarısız oldu' }, { status: 500 });
   }
 }
 
@@ -168,10 +161,7 @@ export async function DELETE(request) {
         { status: 500 }
       );
     }
-  } catch (error) {
-    return NextResponse.json(
-      { success: false, message: 'Video silinirken bir hata oluştu.' },
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ success: false, message: 'Video işlemleri başarısız oldu' }, { status: 500 });
   }
 } 

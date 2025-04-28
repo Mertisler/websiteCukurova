@@ -19,11 +19,8 @@ export async function GET(request, { params }) {
     }
     
     return NextResponse.json({ user: users[0] }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Kullanıcı alınırken bir hata oluştu.' }, 
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ success: false, message: 'Kullanıcı bilgileri alınamadı' }, { status: 500 });
   }
 }
 
@@ -81,11 +78,8 @@ export async function PUT(request, { params }) {
       { message: 'Kullanıcı başarıyla güncellendi' }, 
       { status: 200 }
     );
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Kullanıcı güncellenirken bir hata oluştu.' }, 
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ success: false, message: 'Kullanıcı güncellenirken bir hata oluştu' }, { status: 500 });
   }
 }
 
@@ -116,10 +110,7 @@ export async function DELETE(request, { params }) {
       { message: 'Kullanıcı başarıyla silindi' }, 
       { status: 200 }
     );
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Kullanıcı silinirken bir hata oluştu.' }, 
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ success: false, message: 'Kullanıcı silinirken bir hata oluştu' }, { status: 500 });
   }
 } 

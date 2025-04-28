@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { use } from 'react';
 import Header from '@/components/Header';
 
@@ -129,9 +130,11 @@ export default function AnnouncementDetail({ params }) {
                 {/* Duyuru görseli */}
                 {announcement.image_url && (
                   <div className="mb-8 rounded-lg overflow-hidden shadow-md">
-                    <img 
+                    <Image 
                       src={announcement.image_url} 
                       alt={announcement.title}
+                      width={800}
+                      height={400}
                       className="w-full max-h-96 object-cover"
                       onError={(e) => {
                         e.target.onerror = null;
