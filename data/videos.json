@@ -25,5 +25,14 @@
     "thumbnail_url": "/uploads/image_1745768288874.jpg",
     "youtubeId": "WAysVf8ysXI",
     "date": "27.04.2025"
+  },
+  {
+    "id": "1745836936538",
+    "title": "video 4",
+    "videoUrl": "https://www.youtube.com/watch?v=eifLtxUKzx8",
+    "description": "açıklama 4 \n",
+    "thumbnail_url": "",
+    "youtubeId": "eifLtxUKzx8",
+    "date": "28.04.2025"
   }
 ]

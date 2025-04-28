@@ -27,6 +27,24 @@ export default function AdminPage() {
   const [imageFile, setImageFile] = useState(null);
   const [imageUploading, setImageUploading] = useState(false);
 
+  const setupDatabase = useCallback(async () => {
+    try {
+      setSetupLoading(true);
+      const response = await fetch('/api/db-setup');
+      if (!response.ok) throw new Error('Veritabanı kurulumu başarısız oldu');
+      const data = await response.json();
+      if (data.success) {
+        setDbStatus('connected');
+        setStatusMessage({ message: 'Veritabanı başarıyla kuruldu', isError: false });
+      }
+    } catch {
+      setDbStatus('error');
+      setStatusMessage({ message: 'Veritabanı kurulumu başarısız oldu', isError: true });
+    } finally {
+      setSetupLoading(false);
+    }
+  }, []);
+
   const fetchAnnouncements = useCallback(async () => {
     try {
       setLoading(true);
@@ -449,24 +467,6 @@ export default function AdminPage() {
       }, 5000);
     }
   };
-  
-  const setupDatabase = useCallback(async () => {
-    try {
-      setSetupLoading(true);
-      const response = await fetch('/api/db-setup');
-      if (!response.ok) throw new Error('Veritabanı kurulumu başarısız oldu');
-      const data = await response.json();
-      if (data.success) {
-        setDbStatus('connected');
-        setStatusMessage({ message: 'Veritabanı başarıyla kuruldu', isError: false });
-      }
-    } catch {
-      setDbStatus('error');
-      setStatusMessage({ message: 'Veritabanı kurulumu başarısız oldu', isError: true });
-    } finally {
-      setSetupLoading(false);
-    }
-  }, []);
   
   // Veritabanı durumunu kontrol eden fonksiyon
   const checkDatabaseStatus = async () => {
