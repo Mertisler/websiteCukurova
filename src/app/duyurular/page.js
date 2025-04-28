@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
+import Image from 'next/image';
 
 export default function Announcements() {
   const [announcements, setAnnouncements] = useState([]);
@@ -29,8 +30,8 @@ export default function Announcements() {
             } else {
               setAnnouncements([]);
             }
-          } catch (localError) {
-            console.error('LocalStorage hatası:', localError);
+          } catch (error) {
+            console.error('LocalStorage hatası:', error);
             setAnnouncements([]);
           }
           setLoading(false);
@@ -47,7 +48,7 @@ export default function Announcements() {
           } else {
             setError('Duyurular yüklenirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.');
           }
-        } catch (localError) {
+        } catch (error) {
           setError('Duyurular yüklenirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.');
         }
         
@@ -120,9 +121,11 @@ export default function Announcements() {
                       {announcement.image_url && (
                         <div className="md:w-2/5 overflow-hidden">
                           <div className="h-full relative">
-                            <img 
+                            <Image 
                               src={announcement.image_url} 
                               alt={announcement.title}
+                              width={500}
+                              height={300}
                               className="w-full h-64 md:h-full object-cover transition-transform duration-500 group-hover:scale-105"
                               onError={(e) => {
                                 e.target.onerror = null;

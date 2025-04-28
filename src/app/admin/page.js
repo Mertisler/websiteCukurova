@@ -43,7 +43,7 @@ export default function AdminPage() {
       console.error('localStorage erişim hatası:', error);
       setLoading(false);
     }
-  }, []);
+  }, [syncLocalAnnouncementsWithServer, fetchAnnouncements]);
 
   const handleLogin = (e) => {
     e.preventDefault();

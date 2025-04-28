@@ -237,7 +237,7 @@ export default function QrKodPage() {
                 <li>QR kodun etrafında en az 0.5 cm boşluk bırakın</li>
                 <li>Yüksek kontrastlı bir zemin üzerine yerleştirin</li>
                 <li>Test etmeden kullanmayın, cep telefonunuzla okutarak çalıştığından emin olun</li>
-                <li>Canlı sitenizde QR kodun URL'ini gerçek domain adınızla güncellemeyi unutmayın</li>
+                <li>Canlı sitenizde QR kodun URL&apos;ini gerçek domain adınızla güncellemeyi unutmayın</li>
               </ul>
             </div>
           </div>

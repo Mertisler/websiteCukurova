@@ -101,7 +101,7 @@ export default function UyeOl() {
               <span className="absolute bottom-1 left-0 w-full h-3 bg-amber-300 opacity-50 z-0"></span>
             </h1>
             <p className="text-amber-700 mt-2 max-w-xl mx-auto">
-              BalİZ Parmak Kulübü'ne üye olmak için aşağıdaki formu doldurabilirsiniz. Başvurunuz kulüp yönetimi tarafından değerlendirilecektir.
+              BalİZ Parmak Kulübü&apos;ne üye olmak için aşağıdaki formu doldurabilirsiniz. Başvurunuz kulüp yönetimi tarafından değerlendirilecektir.
             </p>
           </div>
           

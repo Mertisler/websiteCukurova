@@ -8,7 +8,7 @@ export default function Etkinliklerimiz() {
   const [loading, setLoading] = useState(true);
   
   // Örnek etkinlik verileri
-  const [etkinlikler, setEtkinlikler] = useState([
+  const etkinlikler = [
     {
       id: 1,
       baslik: "İşaret Dili Atölyesi",
@@ -53,7 +53,7 @@ export default function Etkinliklerimiz() {
       kontenjan: 100,
       kalan: 65
     }
-  ]);
+  ];
 
   // Sayfa yüklendiğinde loading durumunu kapat
   useEffect(() => {

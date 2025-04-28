@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from 'next/image';
 
 export default function VideoAdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -262,21 +263,6 @@ export default function VideoAdminPage() {
     }
   };
 
-  // Embed URL oluşturma yardımcı fonksiyonu (YouTube için)
-  const getEmbedUrl = (url) => {
-    if (!url) return "";
-    
-    // YouTube URL'sini kontrol et
-    const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-    const match = url.match(youtubeRegex);
-    
-    if (match && match[1]) {
-      return `https://www.youtube.com/embed/${match[1]}`;
-    }
-    
-    return url; // Eğer YouTube URL'si değilse, orijinal URL'yi döndür
-  };
-
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-amber-50 to-amber-100 p-4">
@@ -444,10 +430,11 @@ export default function VideoAdminPage() {
                         >
                           <div className="relative pb-[56.25%] bg-gray-100">
                             {video.thumbnail_url ? (
-                              <img 
+                              <Image 
                                 src={video.thumbnail_url} 
                                 alt={video.title}
-                                className="absolute inset-0 w-full h-full object-cover"
+                                fill
+                                className="object-cover"
                                 onError={(e) => {
                                   e.target.onerror = null;
                                   e.target.src = "/placeholder-video.png";
