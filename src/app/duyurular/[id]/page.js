@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
-import { use } from 'react';
 import Header from '@/components/Header';
 
 export default function AnnouncementDetail({ params }) {

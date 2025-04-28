@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -27,23 +27,31 @@ export default function AdminPage() {
   const [imageFile, setImageFile] = useState(null);
   const [imageUploading, setImageUploading] = useState(false);
 
-  useEffect(() => {
-    // Sayfa yüklendiğinde oturum durumunu kontrol et
+  const fetchAnnouncements = useCallback(async () => {
     try {
-      const adminAuth = localStorage.getItem("adminAuth");
-      if (adminAuth) {
-        setIsLoggedIn(true);
-        fetchAnnouncements();
-        // Yerel duyuruları sunucuyla senkronize et
-        syncLocalAnnouncementsWithServer();
-      } else {
-        setLoading(false);
-      }
+      setLoading(true);
+      
+      const response = await fetch('/api/announcements');
+      if (!response.ok) throw new Error('Duyurular alınamadı');
+      const data = await response.json();
+      setAnnouncements(data.announcements);
     } catch (error) {
-      console.error('localStorage erişim hatası:', error);
+      console.error('Duyuru yükleme hatası:', error);
+      setStatusMessage({ 
+        message: "Duyurular alınırken bir hata oluştu.", 
+        isError: true 
+      });
+      
+      setAnnouncements([]);
+      
+      // 5 saniye sonra hata mesajını temizle
+      setTimeout(() => {
+        setStatusMessage({ message: "", isError: false });
+      }, 5000);
+    } finally {
       setLoading(false);
     }
-  }, [syncLocalAnnouncementsWithServer, fetchAnnouncements]);
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -63,40 +71,6 @@ export default function AdminPage() {
     setIsLoggedIn(false);
     setUsername("");
     setPassword("");
-  };
-
-  const fetchAnnouncements = async () => {
-    try {
-      setLoading(true);
-      
-      // API'den duyuruları çek
-      const response = await fetch('/api/announcements');
-      if (!response.ok) {
-        throw new Error('Duyurular alınamadı');
-      }
-      
-      const data = await response.json();
-      if (data && data.announcements) {
-        setAnnouncements(data.announcements);
-      } else {
-        setAnnouncements([]);
-      }
-    } catch (error) {
-      console.error(error);
-      setStatusMessage({ 
-        message: "Duyurular alınırken bir hata oluştu.", 
-        isError: true 
-      });
-      
-      setAnnouncements([]);
-      
-      // 5 saniye sonra hata mesajını temizle
-      setTimeout(() => {
-        setStatusMessage({ message: "", isError: false });
-      }, 5000);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleAnnouncementChange = (e) => {
@@ -304,7 +278,7 @@ export default function AdminPage() {
   };
 
   // Yerel duyuruları uzak sunucuyla senkronize et
-  const syncLocalAnnouncementsWithServer = async () => {
+  const syncLocalAnnouncementsWithServer = useCallback(async () => {
     try {
       // Veritabanı bağlantısını kontrol et
       const dbCheckResponse = await fetch('/api/db-sync');
@@ -401,7 +375,7 @@ export default function AdminPage() {
         setStatusMessage({ message: "", isError: false });
       }, 5000);
     }
-  };
+  }, [fetchAnnouncements]);
   
   // Manuel senkronizasyon fonksiyonu
   const manualSync = async () => {
@@ -573,6 +547,10 @@ export default function AdminPage() {
       checkDatabaseStatus();
     }
   }, [isLoggedIn]); // isLoggedIn değiştiğinde kontrol et
+
+  useEffect(() => {
+    fetchAnnouncements();
+  }, [fetchAnnouncements]);
 
   if (!isLoggedIn) {
     return (

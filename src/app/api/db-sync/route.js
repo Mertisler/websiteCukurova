@@ -65,17 +65,8 @@ export async function GET() {
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error('Veritabanı senkronizasyon hatası:', error);
-    
-    return NextResponse.json(
-      { 
-        success: false, 
-        message: 'Uzak veritabanı bağlantısı sırasında bir hata oluştu: ' + error.message,
-        dbStatus: 'error'
-      },
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ success: false, message: 'Veritabanı senkronizasyonu başarısız oldu' }, { status: 500 });
   }
 }
 
