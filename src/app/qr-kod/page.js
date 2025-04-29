@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef , Suspense } from 'react';
 import QRCode from 'qrcode';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function QrKodPage() {
+// Ana içerik bileşeni
+const QrKodContent = () => {
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [videolar, setVideolar] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -246,5 +247,14 @@ export default function QrKodPage() {
       
       <Footer />
     </div>
+  );
+};
+
+// Ana sayfa bileşeni
+export default function QrKodPage() {
+  return (
+    <Suspense fallback={<div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-amber-500"></div>}>
+      <QrKodContent />
+    </Suspense>
   );
 } 

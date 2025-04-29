@@ -1,14 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
-export default function KitapOkuDinlePage() {
+// Ana içerik bileşeni
+const KitapOkuDinleContent = () => {
   const searchParams = useSearchParams();
-  const videoParam = searchParams.get('video');
+  const videoParam = searchParams.get('video', '0');
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videolar, setVideolar] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(0);
@@ -366,5 +367,14 @@ export default function KitapOkuDinlePage() {
       
       <Footer />
     </div>
+  );
+};
+
+// Ana sayfa bileşeni
+export default function KitapOkuDinlePage() {
+  return (
+      <Suspense fallback={<div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-amber-500"></div>}>
+        <KitapOkuDinleContent />
+      </Suspense>
   );
 } 

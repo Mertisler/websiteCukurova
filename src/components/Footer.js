@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-lg font-bold mb-4">Bal Küpü Duyuru Sistemi</h3>
+            <h3 className="text-lg font-bold mb-4">BALİZ PARMAK KULÜBÜ</h3>
             <p className="mb-4 text-amber-100">
               Güncel duyurular ve haberler için tek adres.
             </p>

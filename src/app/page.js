@@ -77,7 +77,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-amber-800 opacity-20 pattern-honeycomb pattern-amber-700 pattern-bg-transparent pattern-size-6 pattern-opacity-20"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">BalİZ Parmak Kulübü</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">BALİZ PARMAK KULÜBÜ</h1>
             <p className="text-xl mb-8">Çukurova Üniversitesi'nde engelleri aşan, ilham veren öğrenci kulübü</p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link 

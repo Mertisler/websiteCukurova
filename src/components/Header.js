@@ -11,8 +11,8 @@ export default function Header() {
           <Link href="/" className="flex items-center">
             <div className="w-10 h-10 mr-3 relative">
               <Image
-                src="/honey-pot.svg"
-                alt="Bal Küpü Logo"
+                src="/baliz.jpg"
+                alt="BALİZ PARMAK KULÜBÜ Logo"
                 fill
                 className="object-contain"
                 onError={(e) => {
@@ -20,7 +20,7 @@ export default function Header() {
                 }}
               />
             </div>
-            <h1 className="text-xl font-bold text-white">Bal Küpü</h1>
+            <h1 className="text-xl font-bold text-white">BALİZ PARMAK KULÜBÜ</h1>
           </Link>
           
           <nav>

@@ -89,7 +89,7 @@ export default function IletisimPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-amber-800">Adres</h3>
-                      <p className="text-amber-700">Çukurova Üniversitesi, Balcalı Kampüsü, 01330, Sarıçam, Adana</p>
+                      <p className="text-amber-700">Çukurova Üniversitesi Rektörlüğü, Balcalı, 01330 Sarıçam/Adana</p>
                     </div>
                   </div>
                   
