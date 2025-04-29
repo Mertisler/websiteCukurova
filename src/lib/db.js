@@ -2,11 +2,11 @@ import mysql from 'mysql2/promise';
 
 // Veritabanı bağlantı bilgileri - verilen gerçek bağlantı bilgileriyle güncellendi
 export const dbConfig = {
-  host: 'srv1687.hstgr.io',      // Sağlanan host bilgisi
+  host: 'srv1971.hstgr.io',      // Sağlanan host bilgisi
   port: 3306,                     // MySQL varsayılan port
-  user: 'u557715389_root',        // Sağlanan kullanıcı adı
+  user: 'u284653657_root',        // Sağlanan kullanıcı adı
   password: 'mertISLER123',       // Sağlanan şifre
-  database: 'u557715389_cukurova', // Sağlanan veritabanı adı
+  database: 'u284653657_balizparmak', // Sağlanan veritabanı adı
   connectTimeout: 60000           // 60 saniye bağlantı zaman aşımı
 };
 
