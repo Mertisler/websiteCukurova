@@ -84,21 +84,6 @@ export default function HakkimizdaPage() {
                 </div>
               </div>
             </div>
-            
-            <div className="mt-12 bg-amber-100 p-6 rounded-lg border-2 border-dashed border-amber-300">
-              <h2 className="text-xl font-bold text-amber-800 mb-4">İletişimde Kalın</h2>
-              <p className="text-amber-700 mb-4">
-                Bal Küpü Duyuru Sistemi hakkında daha fazla bilgi edinmek veya geri bildirimde bulunmak için 
-                bizimle iletişime geçebilirsiniz. Sorularınızı, önerilerinizi ve düşüncelerinizi duymaktan 
-                her zaman memnuniyet duyarız.
-              </p>
-              <a 
-                href="/iletisim" 
-                className="inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-6 rounded-lg transition-colors"
-              >
-                İletişim Sayfası
-              </a>
-            </div>
           </div>
         </div>
       </main>

@@ -109,14 +109,6 @@ export default function Header() {
                 </li>
                 <li>
                   <Link 
-                    href="/iletisim" 
-                    className="text-white hover:text-amber-200 font-medium transition-colors"
-                  >
-                    İletişim
-                  </Link>
-                </li>
-                <li>
-                  <Link 
                     href="/admin" 
                     className="bg-amber-600 hover:bg-amber-700 text-white font-medium py-1 px-3 rounded-lg transition-colors"
                   >
@@ -166,15 +158,6 @@ export default function Header() {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Hakkımızda
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/iletisim" 
-                  className="block px-4 py-2 text-white hover:bg-amber-700 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  İletişim
                 </Link>
               </li>
               <li>

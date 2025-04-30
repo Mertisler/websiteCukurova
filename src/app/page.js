@@ -80,18 +80,7 @@ export default function Home() {
             <h1 className="text-4xl md:text-5xl font-bold mb-4">BALİZ PARMAK KULÜBÜ</h1>
             <p className="text-xl mb-8">Çukurova Üniversitesi'nde engelleri aşan, ilham veren öğrenci kulübü</p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link 
-                href="/uye-ol" 
-                className="bg-white text-amber-700 hover:bg-amber-100 py-3 px-6 rounded-lg font-medium transition-colors shadow-md"
-              >
-                Bize Katıl
-              </Link>
-              <Link 
-                href="/iletisim" 
-                className="bg-amber-700 hover:bg-amber-800 text-white py-3 px-6 rounded-lg font-medium transition-colors shadow-md border border-amber-500"
-              >
-                İletişime Geç
-              </Link>
+              {/* Butonlar kaldırıldı */}
             </div>
           </div>
         </div>
@@ -501,35 +490,6 @@ export default function Home() {
                   Profesyonel kurumlarla bağlantılar kurarak üyelerimize staj ve iş imkanları sağlıyoruz.
                 </p>
               </div>
-            </div>
-          </div>
-        </section>
-        
-        {/* Katılım Çağrısı */}
-        <section className="bg-gradient-to-r from-amber-500 to-amber-700 rounded-xl shadow-lg p-8 text-white text-center mb-16 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full">
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 w-full h-full">
-              <defs>
-                <pattern id="honey-pattern" patternUnits="userSpaceOnUse" width="56" height="100" patternTransform="scale(0.5)">
-                  <path d="M28 66L0 50L0 16L28 0L56 16L56 50L28 66Z M28 33L56 16L56 50L28 66L0 50L0 16L28 0L56 16Z" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#honey-pattern)" />
-            </svg>
-          </div>
-          
-          <div className="relative z-10">
-            <h2 className="text-3xl font-bold mb-4">Şimdi Sen de İzini Bırak!</h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto">
-              BalİZ Parmak ile yalnızca engelleri aşmakla kalmaz, aynı zamanda hayallerinizi gerçeğe dönüştürürsünüz.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link 
-                href="/uye-ol" 
-                className="bg-white text-amber-700 hover:bg-amber-100 py-3 px-8 rounded-lg font-medium transition-colors shadow-md"
-              >
-                Hemen Üye Ol
-              </Link>
             </div>
           </div>
         </section>

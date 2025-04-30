@@ -192,29 +192,9 @@ const KitapOkuDinleContent = () => {
                       <h3 className="text-xl font-bold text-amber-800">{kitap.baslik}</h3>
                       <p className="text-amber-600 mb-2">Yazar: {kitap.yazar}</p>
                       <p className="text-amber-700">{kitap.aciklama}</p>
-                      <a 
-                        href="#" 
-                        className="mt-4 inline-block bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded transition-colors"
-                      >
-                        Detaylar
-                      </a>
                     </div>
                   </div>
                 ))}
-              </div>
-              
-              <div className="mt-8 bg-amber-100 p-6 rounded-lg border-2 border-dashed border-amber-300 text-center">
-                <h3 className="text-xl font-bold text-amber-800 mb-3">Kitap Kulübüne Katılın</h3>
-                <p className="text-amber-700 mb-4">
-                  Her ay düzenlediğimiz kitap kulübü toplantılarında, engelsiz yaşam ve iletişim odaklı 
-                  kitaplar hakkında tartışıyor, fikirlerimizi paylaşıyoruz.
-                </p>
-                <Link 
-                  href="/iletisim" 
-                  className="inline-block bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-6 rounded-lg transition-colors"
-                >
-                  Kitap Kulübüne Katıl
-                </Link>
               </div>
             </div>
           </div>
