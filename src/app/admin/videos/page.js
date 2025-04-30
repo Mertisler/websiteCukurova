@@ -26,6 +26,8 @@ export default function VideoAdminPage() {
         setIsLoggedIn(true);
         fetchVideos();
       } else {
+        // Kullanıcı oturum açmamışsa, admin giriş sayfasına yönlendir
+        window.location.href = '/admin';
         setLoading(false);
       }
     } catch (error) {

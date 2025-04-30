@@ -19,14 +19,17 @@ export async function POST(request) {
       );
     }
 
+    console.log('Başvuru e-postası gönderiliyor:', { ad, soyad, email });
+
     // E-posta transporter oluştur (SMTP yapılandırması)
     const transporter = nodemailer.createTransport({
-      host: 'srv1687.hstgr.io', // Hosting sağlayıcınızın SMTP sunucusu
-      port: 465,
-      secure: true, // true for 465, false for other ports
+      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, 
       auth: {
-        user: 'uyelik@baliz.org', // Kullanılacak e-posta adresi
-        pass: process.env.EMAIL_PASSWORD // Şifre (güvenli olması için .env dosyasından alın)
+        user: 'islermert88@gmail.com', // Kullanılacak e-posta adresi
+        pass: 'BalCukurova2025' // E-posta şifresi
       },
     });
 
@@ -38,7 +41,7 @@ export async function POST(request) {
 
     // E-posta içeriği
     const mailOptions = {
-      from: `"BALİZ Üyelik Formu" <uyelik@baliz.org>`,
+      from: `"BALİZ Üyelik Formu" <islermert88@gmail.com>`,
       to: 'islermert88@gmail.com', // Kulüp yöneticisinin e-posta adresi
       subject: `Yeni Üyelik Başvurusu: ${ad} ${soyad}`,
       html: `
@@ -98,11 +101,12 @@ export async function POST(request) {
     };
 
     // E-postayı gönder
-    await transporter.sendMail(mailOptions);
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Yöneticiye e-posta gönderildi:', info.messageId);
 
     // Başvuru sahibine teşekkür e-postası gönder
     const userMailOptions = {
-      from: `"BALİZ PARMAK KULÜBÜ" <uyelik@baliz.org>`,
+      from: `"BALİZ PARMAK KULÜBÜ" <islermert88@gmail.com>`,
       to: email,
       subject: `Üyelik Başvurunuz Alındı - ${kulupAdi}`,
       html: `
@@ -132,11 +136,12 @@ export async function POST(request) {
     };
 
     // Kullanıcıya teşekkür e-postası gönder
-    await transporter.sendMail(userMailOptions);
+    const userInfo = await transporter.sendMail(userMailOptions);
+    console.log('Kullanıcıya e-posta gönderildi:', userInfo.messageId);
 
     // Başarılı yanıt
     return NextResponse.json(
-      { message: 'Başvurunuz başarıyla alındı.' },
+      { message: 'Başvurunuz başarıyla alındı.', info, userInfo },
       { status: 200 }
     );
   } catch (error) {
@@ -144,7 +149,10 @@ export async function POST(request) {
     
     // Hata yanıtı
     return NextResponse.json(
-      { message: 'Başvurunuz gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.' },
+      { 
+        message: 'Başvurunuz gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.',
+        error: error.message || 'Bilinmeyen hata'
+      },
       { status: 500 }
     );
   }

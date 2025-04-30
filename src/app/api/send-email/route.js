@@ -15,22 +15,25 @@ export async function POST(request) {
       );
     }
 
+    console.log('E-posta gönderiliyor:', { name, email, to });
+
     // E-posta transporter oluştur (SMTP yapılandırması)
     const transporter = nodemailer.createTransport({
-      host: 'srv1687.hstgr.io', // Hosting sağlayıcınızın SMTP sunucusu
-      port: 465,
-      secure: true, // true for 465, false for other ports
+      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, 
       auth: {
-        user: 'iletisim@baliz.org', // Kullanılacak e-posta adresi
-        pass: process.env.EMAIL_PASSWORD // Şifre (güvenli olması için .env dosyasından alın)
+        user: 'islermert88@gmail.com', // Kullanılacak e-posta adresi
+        pass: 'BalCukurova2025' // E-posta şifresi
       },
     });
 
     // E-posta içeriği
     const mailOptions = {
-      from: `"BALİZ İletişim Formu" <iletisim@baliz.org>`,
+      from: `"BALİZ İletişim Formu" <islermert88@gmail.com>`,
       to: to,
-      subject: `İletişim Formu: ${subject}`,
+      subject: `İletişim Formu: ${subject || 'Konu Belirtilmemiş'}`,
       html: `
         <div style="font-family: Arial, sans-serif; color: #444; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #f0f0f0; border-radius: 10px;">
           <h2 style="color: #d97706; border-bottom: 2px solid #fbbf24; padding-bottom: 10px;">Yeni İletişim Formu Mesajı</h2>
@@ -54,11 +57,12 @@ export async function POST(request) {
     };
 
     // E-postayı gönder
-    await transporter.sendMail(mailOptions);
+    const info = await transporter.sendMail(mailOptions);
+    console.log('E-posta gönderildi:', info.messageId);
 
     // Başarılı yanıt
     return NextResponse.json(
-      { message: 'E-posta başarıyla gönderildi.' },
+      { message: 'E-posta başarıyla gönderildi.', info },
       { status: 200 }
     );
   } catch (error) {
@@ -66,7 +70,10 @@ export async function POST(request) {
     
     // Hata yanıtı
     return NextResponse.json(
-      { message: 'E-posta gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.' },
+      { 
+        message: 'E-posta gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.',
+        error: error.message || 'Bilinmeyen hata'
+      },
       { status: 500 }
     );
   }

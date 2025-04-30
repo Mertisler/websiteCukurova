@@ -47,27 +47,25 @@ const KitapOkuDinleContent = () => {
     return (match && match[2].length === 11) ? match[2] : null;
   };
 
-  // Videoları yerel depolamadan yükle
+  // Videoları API'den yükle
   useEffect(() => {
     setLoading(true);
 
     // Video verilerini dönüştürme fonksiyonu
     const processVideoData = (video) => {
-      // Eğer youtubeId yoksa ama videoUrl varsa, ID'yi URL'den çıkar
+      // Video ID'sini kontrol et ve gerekiyorsa URL'den çıkar
       if (!video.youtubeId && video.videoUrl) {
         video.youtubeId = getYoutubeIdFromUrl(video.videoUrl);
       }
-      // video_url varsa ve youtubeId yoksa, video_url'den ID çıkar
       else if (!video.youtubeId && video.video_url) {
         video.youtubeId = getYoutubeIdFromUrl(video.video_url);
       }
       
-      // Başlığı kontrol et
+      // Diğer alan kontrolleri
       if (!video.title && video.baslik) {
         video.title = video.baslik;
       }
       
-      // Açıklamayı kontrol et
       if (!video.description && video.content) {
         video.description = video.content;
       }
@@ -75,8 +73,8 @@ const KitapOkuDinleContent = () => {
       return video;
     };
 
-    // Önce API'den videoları almayı dene
-    fetch('/api/videos')
+    // Her durumda API'den taze verileri al
+    fetch('/api/videos?' + new Date().getTime())
       .then(response => {
         if (!response.ok) {
           throw new Error('API\'den videolar alınamadı');
@@ -92,65 +90,19 @@ const KitapOkuDinleContent = () => {
           // URL'de belirtilen video var mı kontrol et
           if (videoParam) {
             const videoIndex = processedVideos.findIndex(video => 
-              video.id.toString() === videoParam);
+              String(video.id) === String(videoParam));
             if (videoIndex !== -1) {
               setSelectedVideo(videoIndex);
             }
           }
-          
-          // localStorage'a kaydet
-          localStorage.setItem("videos", JSON.stringify(processedVideos));
         } else {
-          // API'den veri gelmezse localStorage'a bak
-          const storedVideos = localStorage.getItem("videos");
-          
-          if (storedVideos) {
-            try {
-              const parsedVideos = JSON.parse(storedVideos).map(processVideoData);
-              setVideolar(parsedVideos);
-              
-              if (videoParam) {
-                const videoIndex = parsedVideos.findIndex(video => 
-                  video.id.toString() === videoParam);
-                if (videoIndex !== -1) {
-                  setSelectedVideo(videoIndex);
-                }
-              }
-            } catch (error) {
-              console.error("Yerel depolama okuma hatası:", error);
-              showDefaultVideos();
-            }
-          } else {
-            // Lokalde video yoksa varsayılan videoları göster
-            showDefaultVideos();
-          }
+          // API'den veri gelmezse varsayılan videoları göster
+          showDefaultVideos();
         }
       })
       .catch(error => {
         console.error("API hatası:", error);
-        
-        // API hatası durumunda localStorage'a bak
-        try {
-          const storedVideos = localStorage.getItem("videos");
-          
-          if (storedVideos) {
-            const parsedVideos = JSON.parse(storedVideos).map(processVideoData);
-            setVideolar(parsedVideos);
-            
-            if (videoParam) {
-              const videoIndex = parsedVideos.findIndex(video => 
-                video.id.toString() === videoParam);
-              if (videoIndex !== -1) {
-                setSelectedVideo(videoIndex);
-              }
-            }
-          } else {
-            showDefaultVideos();
-          }
-        } catch (err) {
-          console.error("Veri işleme hatası:", err);
-          showDefaultVideos();
-        }
+        showDefaultVideos();
       })
       .finally(() => {
         setLoading(false);
@@ -176,7 +128,6 @@ const KitapOkuDinleContent = () => {
       ];
       
       setVideolar(defaultVideos);
-      localStorage.setItem("videos", JSON.stringify(defaultVideos));
       
       if (videoParam && videoParam === "2") {
         setSelectedVideo(1);
