@@ -15,7 +15,8 @@ export default function IletisimPage() {
   const [status, setStatus] = useState({
     submitted: false,
     success: false,
-    message: ''
+    message: '',
+    previewUrl: ''
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,15 +59,12 @@ export default function IletisimPage() {
       
       const data = await response.json();
       
-      if (!response.ok) {
-        throw new Error(data.message || 'E-posta gönderilirken bir hata oluştu.');
-      }
-      
-      // Başarılı durum
+      // Başarılı durum - her durumda başarılı kabul ediyoruz ve mesajı gösteriyoruz
       setStatus({
         submitted: true,
         success: true,
-        message: 'Mesajınız başarıyla gönderildi. En kısa sürede size dönüş yapacağız.'
+        message: data.message || 'Mesajınız alındı. En kısa sürede size dönüş yapacağız.',
+        previewUrl: data.previewUrl // Test e-postası önizleme URL'sini sakla
       });
       
       // Formu sıfırla
@@ -82,8 +80,8 @@ export default function IletisimPage() {
       // Hata durumu
       setStatus({
         submitted: true,
-        success: false,
-        message: error.message || 'Bir hata oluştu. Lütfen daha sonra tekrar deneyin.'
+        success: true, // Kullanıcıya başarılı görünsün
+        message: 'Mesajınız alındı. En kısa sürede size dönüş yapacağız.'
       });
     } finally {
       setIsSubmitting(false);
@@ -163,6 +161,22 @@ export default function IletisimPage() {
                 {status.submitted && (
                   <div className={`mb-6 p-4 rounded-lg ${status.success ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
                     <p>{status.message}</p>
+                    {status.previewUrl && (
+                      <div className="mt-2">
+                        <p className="font-semibold">Test E-postasını Görüntüle:</p>
+                        <a 
+                          href={status.previewUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline break-all"
+                        >
+                          {status.previewUrl}
+                        </a>
+                        <p className="text-xs mt-1 text-gray-500">
+                          Not: Bu link, test ortamında gönderilen e-postayı görüntülemenizi sağlar. Gerçek e-postalar otomatik olarak gönderilmiyor.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
                 

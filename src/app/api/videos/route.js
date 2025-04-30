@@ -72,6 +72,15 @@ export async function GET() {
     const videos = getVideos();
     // Her bir videoyu normalize et
     const normalizedVideos = videos.map(normalizeVideoData);
+    
+    // Videoları tarihe göre sırala (en yeniden en eskiye)
+    normalizedVideos.sort((a, b) => {
+      // Tarih formatını karşılaştırılabilir formata çevir
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateB - dateA; // Azalan sıralama (en yeni en üstte)
+    });
+    
     return NextResponse.json({ success: true, videos: normalizedVideos });
   } catch {
     return NextResponse.json({ success: false, message: 'Video işlemleri başarısız oldu' }, { status: 500 });

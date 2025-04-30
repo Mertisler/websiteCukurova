@@ -9,11 +9,79 @@ import { useSearchParams } from 'next/navigation';
 // Ana içerik bileşeni
 const KitapOkuDinleContent = () => {
   const searchParams = useSearchParams();
-  const videoParam = searchParams.get('video', '0');
-  const [videoLoaded, setVideoLoaded] = useState(false);
-  const [videolar, setVideolar] = useState([]);
-  const [selectedVideo, setSelectedVideo] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [videos, setVideos] = useState([]);
+
+  // Videoları API'den çekme
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/videos');
+        
+        if (!response.ok) {
+          throw new Error('Videolar alınamadı');
+        }
+        
+        const data = await response.json();
+        if (data && data.videos) {
+          // Türkçe tarih formatını JavaScript'in anlayabileceği formata çevirme fonksiyonu
+          function parseTurkishDate(dateStr) {
+            if (!dateStr) return new Date(0); // Geçersiz tarih varsa en eski tarihi döndür
+            
+            // ISO format kontrolü (yyyy-mm-dd)
+            if (dateStr.includes('-')) {
+              return new Date(dateStr);
+            }
+            
+            // Türkçe format (dd.mm.yyyy)
+            if (dateStr.includes('.')) {
+              const parts = dateStr.split('.');
+              if (parts.length === 3) {
+                // Ay değeri 0-11 arasında olmalı, bu yüzden 1 çıkarıyoruz
+                return new Date(parts[2], parts[1] - 1, parts[0]);
+              }
+            }
+            
+            // Son çare olarak doğrudan Date'i dene
+            return new Date(dateStr);
+          }
+          
+          // Önce ID'ye göre sırala (daha yüksek ID daha yeni demektir)
+          const sortedByIdVideos = [...data.videos].sort((a, b) => {
+            // Sayısal olarak karşılaştır (string olarak değil)
+            return Number(b.id) - Number(a.id);
+          });
+          
+          // Sonra tarihe göre sırala (en yeni en üstte olacak şekilde)
+          const sortedVideos = sortedByIdVideos.sort((a, b) => {
+            const dateA = parseTurkishDate(a.date);
+            const dateB = parseTurkishDate(b.date);
+            
+            // Önce tarihleri karşılaştır
+            const dateDiff = dateB - dateA;
+            
+            // Eğer tarihler aynıysa, ID'ye göre sırala
+            if (dateDiff === 0) {
+              return Number(b.id) - Number(a.id);
+            }
+            
+            return dateDiff;
+          });
+          
+          console.log("Sıralanmış videolar:", sortedVideos.map(v => ({id: v.id, title: v.title, date: v.date})));
+          
+          setVideos(sortedVideos);
+        }
+      } catch (error) {
+        console.error('Video yükleme hatası:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, []);
 
   const kitaplar = [
     {
@@ -39,107 +107,6 @@ const KitapOkuDinleContent = () => {
     }
   ];
 
-  // YouTube URL'inden video ID'sini çıkaran fonksiyon
-  const getYoutubeIdFromUrl = (url) => {
-    if (!url) return null;
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
-  };
-
-  // Videoları API'den yükle
-  useEffect(() => {
-    setLoading(true);
-
-    // Video verilerini dönüştürme fonksiyonu
-    const processVideoData = (video) => {
-      // Video ID'sini kontrol et ve gerekiyorsa URL'den çıkar
-      if (!video.youtubeId && video.videoUrl) {
-        video.youtubeId = getYoutubeIdFromUrl(video.videoUrl);
-      }
-      else if (!video.youtubeId && video.video_url) {
-        video.youtubeId = getYoutubeIdFromUrl(video.video_url);
-      }
-      
-      // Diğer alan kontrolleri
-      if (!video.title && video.baslik) {
-        video.title = video.baslik;
-      }
-      
-      if (!video.description && video.content) {
-        video.description = video.content;
-      }
-      
-      return video;
-    };
-
-    // Her durumda API'den taze verileri al
-    fetch('/api/videos?' + new Date().getTime())
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('API\'den videolar alınamadı');
-        }
-        return response.json();
-      })
-      .then(data => {
-        if (data && data.videos && data.videos.length > 0) {
-          // API'den gelen videoları işle
-          const processedVideos = data.videos.map(processVideoData);
-          setVideolar(processedVideos);
-          
-          // URL'de belirtilen video var mı kontrol et
-          if (videoParam) {
-            const videoIndex = processedVideos.findIndex(video => 
-              String(video.id) === String(videoParam));
-            if (videoIndex !== -1) {
-              setSelectedVideo(videoIndex);
-            }
-          }
-        } else {
-          // API'den veri gelmezse varsayılan videoları göster
-          showDefaultVideos();
-        }
-      })
-      .catch(error => {
-        console.error("API hatası:", error);
-        showDefaultVideos();
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-      
-    // Varsayılan videoları gösteren yardımcı fonksiyon  
-    function showDefaultVideos() {
-      const defaultVideos = [
-        {
-          id: 1,
-          title: "İşaret Dili Eğitimi - Temel İletişim",
-          description: "Bu eğitim videosunda, işaret dilinde temel iletişim kurma becerilerini öğreneceksiniz. Günlük hayatta kullanılan temel işaretler, selamlaşma, teşekkür etme ve basit sohbetler için gereken işaretleri içerir.",
-          youtubeId: "8645Yjp1tGA",
-          date: new Date().toLocaleDateString('tr-TR')
-        },
-        {
-          id: 2,
-          title: "İşaret Dili - Pratik Gösterim",
-          description: "Bu kısa videoda işaret dilinde pratik bir uygulama gösterilmektedir. Videoyu takip ederek işaret dilinde temel hareketleri uygulama fırsatı bulabilirsiniz.",
-          youtubeId: "xtt9rMk-Ov0",
-          date: new Date().toLocaleDateString('tr-TR')
-        }
-      ];
-      
-      setVideolar(defaultVideos);
-      
-      if (videoParam && videoParam === "2") {
-        setSelectedVideo(1);
-      }
-    }
-  }, [videoParam]);
-
-  // Video değiştiğinde yükleme durumunu sıfırla
-  useEffect(() => {
-    setVideoLoaded(false);
-  }, [selectedVideo]);
-
   // Videoların olup olmadığını kontrol et
   if (loading) {
     return (
@@ -148,30 +115,6 @@ const KitapOkuDinleContent = () => {
       </div>
     );
   }
-
-  // Video yoksa kullanıcıya bilgi göster
-  if (videolar.length === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-amber-50 to-amber-100">
-        <Header />
-        <main className="container mx-auto px-4 py-8">
-          <div className="bg-white rounded-xl shadow-lg p-6 md:p-10 mb-10">
-            <h1 className="text-3xl font-bold text-amber-800 mb-6">Kitap Oku ve Dinle</h1>
-            <div className="bg-amber-50 p-8 rounded-lg text-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-amber-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
-              <h2 className="text-xl font-bold text-amber-800 mb-2">Henüz Video Eklenmemiş</h2>
-              <p className="text-amber-700">Yakında yeni videolar eklenecektir. Lütfen daha sonra tekrar kontrol edin.</p>
-            </div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  const currentVideo = videolar[selectedVideo];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-amber-100">
@@ -188,87 +131,49 @@ const KitapOkuDinleContent = () => {
               <span className="absolute bottom-1 left-0 w-full h-3 bg-amber-300 opacity-50 z-0"></span>
             </h1>
             
+            {/* Eğitim Videoları - Şimdi en üstte */}
+            {videos.length > 0 && (
+              <div className="mb-10">
+                <h2 className="text-2xl font-bold text-amber-700 mb-6">Eğitim Videoları</h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {videos.map((video) => (
+                    <div key={video.id} className="bg-amber-50 rounded-lg overflow-hidden shadow-md border border-amber-200 transition-all hover:shadow-lg hover:-translate-y-1">
+                      <div className="relative pb-[56.25%] bg-amber-100">
+                        {video.youtubeId ? (
+                          <iframe 
+                            src={`https://www.youtube.com/embed/${video.youtubeId}`}
+                            title={video.title}
+                            className="absolute inset-0 w-full h-full"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          ></iframe>
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-4">
+                        <h3 className="text-xl font-bold text-amber-800">{video.title}</h3>
+                        {video.description && (
+                          <p className="text-amber-700 mt-2">{video.description}</p>
+                        )}
+                        <div className="mt-3 text-xs text-amber-600">{video.date}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             <p className="text-amber-700 mb-8">
               BalİZ Parmak Kulübü olarak okuma ve dinleme etkinliklerimiz ile bilgi ve ilham kaynağı olmayı hedefliyoruz.
-              Aşağıda kulüp üyelerimiz için hazırladığımız eğitim videoları ve kitap önerilerini bulabilirsiniz.
+              Aşağıda kulüp üyelerimiz için hazırladığımız kitap önerilerini bulabilirsiniz.
             </p>
-            
-            {/* Video Seçici */}
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-amber-700 mb-4">Eğitim Videoları</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {videolar.map((video, index) => (
-                  <button
-                    key={video.id}
-                    onClick={() => setSelectedVideo(index)}
-                    className={`p-3 text-left rounded-lg transition-all ${
-                      selectedVideo === index
-                        ? "bg-amber-500 text-white shadow-md transform -translate-y-1"
-                        : "bg-amber-100 text-amber-800 hover:bg-amber-200"
-                    }`}
-                  >
-                    <h3 className="font-bold">{video.title}</h3>
-                    <div className="flex justify-between items-center mt-2">
-                      <span className="text-sm truncate max-w-full">{video.description.substring(0, 50)}...</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-            
-            {/* Video Bölümü */}
-            <div className="mb-12">
-              <div className="bg-amber-50 p-4 rounded-lg mb-4">
-                <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-                  {!videoLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-amber-100">
-                      <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-amber-500"></div>
-                    </div>
-                  )}
-                  
-                  {/* Video ID alınıyor */}
-                  {(() => {
-                    // Video ID'sini al 
-                    const videoId = currentVideo.youtubeId || 
-                                    getYoutubeIdFromUrl(currentVideo.videoUrl || currentVideo.video_url || "");
-                    
-                    // YouTube iframe'i göster
-                    return (
-                      <iframe 
-                        className="absolute inset-0 w-full h-full rounded-lg shadow-lg" 
-                        src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
-                        title={currentVideo.title}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowFullScreen
-                        onLoad={() => setVideoLoaded(true)}
-                      ></iframe>
-                    );
-                  })()}
-                </div>
-                
-                <div className="mt-2 text-amber-700 text-center font-medium">
-                  Video: {currentVideo.title}
-                </div>
-                
-                {/* Doğrudan video bağlantısı */}
-                <div className="mt-3 text-center">
-                  <a 
-                    href={currentVideo.videoUrl || currentVideo.video_url || `https://www.youtube.com/watch?v=${currentVideo.youtubeId}`}
-                    target="_blank"
-                    rel="noopener noreferrer" 
-                    className="text-amber-600 hover:text-amber-800 text-sm font-medium underline"
-                  >
-                    Videonun kaynağında açmak için tıklayın
-                  </a>
-                </div>
-              </div>
-              <div className="bg-amber-100 p-4 rounded-lg">
-                <h3 className="font-bold text-amber-800 mb-2">Video Açıklaması</h3>
-                <p className="text-amber-700">
-                  {currentVideo.description}
-                </p>
-              </div>
-            </div>
             
             {/* Kitap Önerileri */}
             <div>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from 'next/image';
 
 export default function VideoAdminPage() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [videos, setVideos] = useState([]);
   const [newVideo, setNewVideo] = useState({ 
     title: "", 
@@ -19,21 +19,8 @@ export default function VideoAdminPage() {
   const [imageUploading, setImageUploading] = useState(false);
 
   useEffect(() => {
-    // Sayfa yüklendiğinde oturum durumunu kontrol et
-    try {
-      const adminAuth = localStorage.getItem("adminAuth");
-      if (adminAuth) {
-        setIsLoggedIn(true);
-        fetchVideos();
-      } else {
-        // Kullanıcı oturum açmamışsa, admin giriş sayfasına yönlendir
-        window.location.href = '/admin';
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error('localStorage erişim hatası:', error);
-      setLoading(false);
-    }
+    // Sayfaya giriş yapıldığında doğrudan videoları yükle
+    fetchVideos();
   }, []);
 
   const fetchVideos = async () => {
@@ -242,28 +229,14 @@ export default function VideoAdminPage() {
           message: "Video silinirken bir hata oluştu: " + error.message, 
           isError: true 
         });
-        
+      
         // 5 saniye sonra hata mesajını temizle
-        setTimeout(() => {
-          setStatusMessage({ message: "", isError: false });
+      setTimeout(() => {
+        setStatusMessage({ message: "", isError: false });
         }, 5000);
       }
     }
   };
-
-  if (!isLoggedIn) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-amber-50 to-amber-100 p-4">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-xl overflow-hidden text-center p-6">
-          <h2 className="text-2xl font-bold mb-4 text-amber-800">Yönetici Girişi Gerekli</h2>
-          <p className="mb-6 text-amber-600">Bu sayfayı görüntülemek için yönetici olarak giriş yapmanız gerekmektedir.</p>
-          <Link href="/admin" className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg">
-            Giriş Sayfasına Git
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-amber-50">

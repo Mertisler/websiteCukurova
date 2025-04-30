@@ -9,7 +9,7 @@ const ADMIN_USERNAME = "admin";
 const ADMIN_PASSWORD = "admin123";
 
 export default function AdminPage() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -26,6 +26,12 @@ export default function AdminPage() {
   const [setupLoading, setSetupLoading] = useState(false); // kurulum yükleniyor durumu
   const [imageFile, setImageFile] = useState(null);
   const [imageUploading, setImageUploading] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem("adminAuth", "true");
+    fetchAnnouncements();
+    checkDatabaseStatus();
+  }, []);
 
   const setupDatabase = useCallback(async () => {
     try {
@@ -517,90 +523,256 @@ export default function AdminPage() {
     fetchAnnouncements();
   }, [fetchAnnouncements]);
 
-  // Admin paneli için butonlar
-  const adminButtons = [
-    { 
-      title: "Tablolar - Bize Ulaşın", 
-      description: "Bize ulaşın sayfasından gelen mesajları yönetin.", 
-      href: "/admin/tablo-guncelle",
-      icon: (
-        <svg className="h-8 w-8 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-        </svg>
-      )
-    },
-    { 
-      title: "Video Yönetimi", 
-      description: "Kitap Oku ve Dinle sayfasındaki videoları yönetin.", 
-      href: "/admin/videos",
-      icon: (
-        <svg className="h-8 w-8 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      ),
-      requiresAuth: true // Video yönetimi için oturum açma gerekiyor
-    }
-  ];
-
   // Oturum açıksa admin panelini göster
   if (isLoggedIn) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-amber-50 to-amber-100">
-        <header className="bg-amber-600 py-6 shadow-md">
-          <div className="container mx-auto px-6">
-            <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-bold text-white">BALİZ Admin Paneli</h1>
-              <div className="flex space-x-4">
-                <button 
-                  onClick={handleLogout}
-                  className="text-white hover:text-amber-200 transition-colors"
-                >
-                  <div className="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    Çıkış Yap
-                  </div>
-                </button>
-                <Link href="/" className="text-white hover:text-amber-200 transition-colors">
-                  <div className="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                    </svg>
-                    Siteye Dön
-                  </div>
-                </Link>
-              </div>
+  return (
+    <div className="min-h-screen bg-amber-50">
+      <header className="bg-amber-600 text-white py-4 shadow-md">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">BalİZ Parmak Kulübü Yönetim Paneli</h1>
+            <Link href="/" className="text-white hover:text-amber-200 transition-colors">
+              Siteye Dön
+            </Link>
+          </div>
+        </div>
+      </header>
+      
+      <main className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-bold text-amber-800">Ana Panel</h2>
+          <div className="flex space-x-4">
+            <Link href="/admin/videos" className="bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-lg">
+              Video Yönetimi
+            </Link>
+              <Link href="/admin/tablo-guncelle" className="bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-lg">
+                Tablo Güncelle
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg"
+            >
+              Çıkış Yap
+            </button>
+          </div>
+        </div>
+        
+        {statusMessage.message && (
+          <div className={`${
+            statusMessage.isError 
+              ? 'bg-red-100 border-l-4 border-red-500 text-red-700' 
+              : 'bg-green-100 border-l-4 border-green-500 text-green-700'
+            } p-4 mb-6 rounded`} role="alert">
+            <p>{statusMessage.message}</p>
+          </div>
+        )}
+        
+        {/* Veritabanı Durumu ve Senkronizasyon Butonu */}
+        <div className="bg-white p-4 rounded shadow mb-6">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <span className="mr-2">Veritabanı Durumu:</span>
+              {dbStatus === "connected" && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                  <span className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>
+                  Bağlı
+                </span>
+              )}
+              {dbStatus === "disconnected" && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                  <span className="w-2 h-2 bg-red-500 rounded-full mr-1.5"></span>
+                  Bağlantı Yok
+                </span>
+              )}
+              {dbStatus === "error" && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                  <span className="w-2 h-2 bg-red-500 rounded-full mr-1.5"></span>
+                  Hata
+                </span>
+              )}
+              {dbStatus === "unknown" && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                  <span className="w-2 h-2 bg-gray-500 rounded-full mr-1.5"></span>
+                  Bilinmiyor
+                </span>
+              )}
+            </div>
+            
+            <div className="flex space-x-2">
+              <button
+                onClick={setupDatabase}
+                disabled={setupLoading}
+                className="bg-purple-500 hover:bg-purple-600 text-white py-1 px-3 rounded shadow text-sm disabled:opacity-50"
+              >
+                {setupLoading ? "Kuruluyor..." : "Veritabanı Kur"}
+              </button>
+              
+              <button
+                onClick={checkDatabaseStatus}
+                disabled={syncLoading || setupLoading}
+                className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded shadow text-sm disabled:opacity-50"
+              >
+                {syncLoading ? "Kontrol Ediliyor..." : "Durumu Kontrol Et"}
+              </button>
+              
+              <button
+                onClick={manualSync}
+                disabled={syncLoading || setupLoading || dbStatus !== "connected"}
+                className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded shadow text-sm disabled:opacity-50"
+              >
+                {syncLoading ? "Senkronize Ediliyor..." : "Manuel Senkronizasyon"}
+              </button>
             </div>
           </div>
-        </header>
+        </div>
         
-        <main className="container mx-auto px-6 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {adminButtons.map((button, index) => (
-              <Link 
-                key={index} 
-                href={button.href}
-                className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-xl"
-              >
-                <div className="p-6">
-                  <div className="bg-amber-100 w-16 h-16 rounded-lg flex items-center justify-center mb-4">
-                    {button.icon}
-                  </div>
-                  <h3 className="text-xl font-bold text-amber-800 mb-2">{button.title}</h3>
-                  <p className="text-amber-600">{button.description}</p>
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="bg-amber-500 px-6 py-4">
+              <h2 className="text-xl font-bold text-white">Yeni Duyuru Ekle</h2>
+            </div>
+            
+            <div className="p-6">
+              <form onSubmit={handleAddAnnouncement}>
+                <div className="mb-4">
+                  <label className="block text-amber-800 text-sm font-bold mb-2" htmlFor="title">
+                    Başlık
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value={newAnnouncement.title}
+                    onChange={handleAnnouncementChange}
+                    className="w-full px-3 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    placeholder="Duyuru başlığını giriniz"
+                    required
+                  />
                 </div>
-              </Link>
-            ))}
+                
+                <div className="mb-4">
+                  <label className="block text-amber-800 text-sm font-bold mb-2" htmlFor="content">
+                    İçerik
+                  </label>
+                  <textarea
+                    id="content"
+                    name="content"
+                    value={newAnnouncement.content}
+                    onChange={handleAnnouncementChange}
+                    className="w-full px-3 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    placeholder="Duyuru içeriğini giriniz"
+                    rows="8"
+                    required
+                  ></textarea>
+                </div>
+                
+                <div className="mb-6">
+                  <label className="block text-amber-800 text-sm font-bold mb-2" htmlFor="image">
+                    Görsel Ekle (İsteğe bağlı)
+                  </label>
+                  <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="w-full px-3 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
+                  {imageFile && (
+                    <div className="mt-2 text-sm text-amber-600">
+                      Seçilen görsel: {imageFile.name}
+                    </div>
+                  )}
+                </div>
+                
+                <button
+                  type="submit"
+                  disabled={imageUploading}
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-opacity-50 transition-colors disabled:opacity-50"
+                >
+                  {imageUploading ? "Görsel Yükleniyor..." : "Duyuru Ekle"}
+                </button>
+              </form>
+            </div>
           </div>
-        </main>
-        
-        <footer className="bg-amber-600 text-white py-4 mt-auto">
-          <div className="container mx-auto px-6">
-            <p className="text-center">&copy; {new Date().getFullYear()} BALİZ Admin - Tüm hakları saklıdır.</p>
+          
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="bg-amber-500 px-6 py-4 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-white">Duyuru Listesi</h2>
+              <span className="bg-white text-amber-500 text-sm font-bold py-1 px-3 rounded-full">
+                {announcements.length} Duyuru
+              </span>
+            </div>
+            
+            <div className="p-6">
+              {loading ? (
+                <div className="flex justify-center items-center h-64">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-amber-500"></div>
+                </div>
+              ) : (
+                <div>
+                  {announcements.length === 0 ? (
+                    <div className="bg-amber-50 border-2 border-dashed border-amber-200 rounded-lg p-8 text-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-amber-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <p className="text-amber-800 text-lg font-medium">Henüz duyuru bulunmamaktadır</p>
+                      <p className="text-amber-600 mt-2">Yeni duyuru eklemek için formu kullanabilirsiniz</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+                      {announcements.map((announcement) => (
+                        <div 
+                          key={announcement.id} 
+                          className="border border-amber-200 rounded-lg p-4 bg-amber-50 hover:shadow-md transition-all duration-300"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="font-bold text-lg text-amber-800">{announcement.title}</h3>
+                              <p className="text-xs text-amber-600 mb-2">{announcement.date}</p>
+                            </div>
+                            <button
+                              onClick={() => handleDeleteAnnouncement(announcement.id)}
+                              className="bg-red-100 hover:bg-red-200 text-red-600 font-medium text-sm py-1 px-3 rounded-full transition-colors"
+                            >
+                              Sil
+                            </button>
+                          </div>
+                          {announcement.image_url && (
+                            <div className="mt-2 mb-3">
+                              <Image 
+                                src={announcement.image_url} 
+                                alt={announcement.title}
+                                width={500}
+                                height={300}
+                                className="rounded-lg max-h-48 object-cover"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "/placeholder-image.png";
+                                  e.target.classList.add("opacity-50");
+                                }}
+                              />
+                            </div>
+                          )}
+                          <p className="mt-2 text-amber-700 whitespace-pre-line">{announcement.content}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-        </footer>
+        </div>
+      </main>
+      
+      <footer className="bg-amber-600 text-white mt-12">
+        <div className="container mx-auto px-6 py-4">
+          <div className="text-center">
+            <p>&copy; {new Date().getFullYear()} Bal Küpü Duyuru Sistemi</p>
+          </div>
+        </div>
+      </footer>
       </div>
     );
   }

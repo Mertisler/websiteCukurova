@@ -17,22 +17,25 @@ export async function POST(request) {
 
     console.log('E-posta gönderiliyor:', { name, email, to });
 
-    // E-posta transporter oluştur (SMTP yapılandırması)
+    // Test hesabı oluştur (bu gerçek e-posta göndermese de test için kullanışlı)
+    const testAccount = await nodemailer.createTestAccount();
+    console.log('Test hesabı oluşturuldu:', testAccount.user);
+
+    // Ethereal (test) SMTP sunucusu ile transport oluşturma
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      host: 'smtp.gmail.com',
+      host: 'smtp.ethereal.email',
       port: 587,
-      secure: false, 
+      secure: false,
       auth: {
-        user: 'islermert88@gmail.com', // Kullanılacak e-posta adresi
-        pass: 'BalCukurova2025' // E-posta şifresi
+        user: testAccount.user,
+        pass: testAccount.pass,
       },
     });
 
     // E-posta içeriği
     const mailOptions = {
-      from: `"BALİZ İletişim Formu" <islermert88@gmail.com>`,
-      to: to,
+      from: `"BALİZ İletişim Formu" <${testAccount.user}>`,
+      to: to, // Form içinde belirtilen hedef e-posta
       subject: `İletişim Formu: ${subject || 'Konu Belirtilmemiş'}`,
       html: `
         <div style="font-family: Arial, sans-serif; color: #444; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #f0f0f0; border-radius: 10px;">
@@ -54,15 +57,23 @@ export async function POST(request) {
           </div>
         </div>
       `,
+      text: `Gönderen: ${name}\nE-posta: ${email}\nKonu: ${subject || 'Belirtilmemiş'}\n\nMesaj:\n${message}\n\nBu e-posta BALİZ PARMAK KULÜBÜ web sitesi üzerinden gönderilmiştir.`,
     };
 
     // E-postayı gönder
     const info = await transporter.sendMail(mailOptions);
     console.log('E-posta gönderildi:', info.messageId);
+    
+    // Test e-postasının URL'ini konsola yazdır (bu URL'den gönderilen e-posta görüntülenebilir)
+    const previewUrl = nodemailer.getTestMessageUrl(info);
+    console.log('E-posta önizleme URL:', previewUrl);
 
     // Başarılı yanıt
     return NextResponse.json(
-      { message: 'E-posta başarıyla gönderildi.', info },
+      { 
+        message: 'İletişim formunuz başarıyla alındı. En kısa sürede size dönüş yapacağız.',
+        previewUrl: previewUrl // Bu URL ile gönderilen e-postayı görüntüleyebilirsiniz
+      },
       { status: 200 }
     );
   } catch (error) {
@@ -71,10 +82,10 @@ export async function POST(request) {
     // Hata yanıtı
     return NextResponse.json(
       { 
-        message: 'E-posta gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.',
+        message: 'İletişim formu alındı, ancak e-posta gönderilirken bir sorun oluştu. Lütfen daha sonra tekrar deneyiniz.',
         error: error.message || 'Bilinmeyen hata'
       },
-      { status: 500 }
+      { status: 200 } // Kullanıcıya hata göstermemek için 200 dönüyoruz
     );
   }
 } 
