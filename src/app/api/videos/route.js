@@ -139,7 +139,9 @@ export async function DELETE(request) {
 
     let videos = getVideos();
     const initialLength = videos.length;
-    videos = videos.filter(video => video.id !== id);
+    
+    // Silme işlemini gerçekleştir ve sonucu kontrol et
+    videos = videos.filter(video => String(video.id) !== String(id));
 
     if (videos.length === initialLength) {
       return NextResponse.json(
@@ -148,6 +150,7 @@ export async function DELETE(request) {
       );
     }
 
+    // Değişiklikleri kaydet
     const saved = saveVideos(videos);
     
     if (saved) {
@@ -161,7 +164,12 @@ export async function DELETE(request) {
         { status: 500 }
       );
     }
-  } catch {
-    return NextResponse.json({ success: false, message: 'Video işlemleri başarısız oldu' }, { status: 500 });
+  } catch (error) {
+    console.error('Video silme hatası:', error);
+    return NextResponse.json({ 
+      success: false, 
+      message: 'Video işlemleri başarısız oldu',
+      error: error.message 
+    }, { status: 500 });
   }
 } 

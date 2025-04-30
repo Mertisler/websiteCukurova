@@ -219,47 +219,33 @@ export default function VideoAdminPage() {
           method: 'DELETE',
         });
         
-        let data;
-        try {
-          data = await response.json();
-        } catch (err) {
-          console.error("JSON İşleme Hatası:", err);
-          
-          // JSON işleme hatası oluşursa, yerel silme işlemi yap
-          const updatedVideos = videos.filter(v => v.id !== id);
-          localStorage.setItem("videos", JSON.stringify(updatedVideos));
-          setVideos(updatedVideos);
-          setStatusMessage({ message: "Video yerel olarak silindi. Uzak sunucuyla iletişim kurulamadı.", isError: false });
-          return;
-        }
+        const data = await response.json();
         
         if (!response.ok && !data.success) {
           throw new Error(data.error || 'Video silinirken bir hata oluştu');
         }
         
-        // Videoyu listeden kaldır
-        const updatedVideos = videos.filter(v => v.id !== id);
-        localStorage.setItem("videos", JSON.stringify(updatedVideos));
+        // Videoyu listeden kaldır ve UI'ı güncelle
+        const updatedVideos = videos.filter(v => String(v.id) !== String(id));
         setVideos(updatedVideos);
         setStatusMessage({ message: data.message || "Video başarıyla silindi.", isError: false });
+        
+        // 3 saniye sonra mesajı temizle
+        setTimeout(() => {
+          setStatusMessage({ message: "", isError: false });
+        }, 3000);
       } catch (error) {
-        console.error(error);
-        
-        // Hata durumunda da yerel silme işlemi yap
-        const updatedVideos = videos.filter(v => v.id !== id);
-        localStorage.setItem("videos", JSON.stringify(updatedVideos));
-        setVideos(updatedVideos);
-        
+        console.error('Video silme hatası:', error);
         setStatusMessage({ 
-          message: "Video veritabanından silinemedi fakat yerel olarak kaldırıldı.", 
+          message: "Video silinirken bir hata oluştu: " + error.message, 
           isError: true 
         });
+        
+        // 5 saniye sonra hata mesajını temizle
+        setTimeout(() => {
+          setStatusMessage({ message: "", isError: false });
+        }, 5000);
       }
-      
-      // 3 saniye sonra durum mesajını temizle
-      setTimeout(() => {
-        setStatusMessage({ message: "", isError: false });
-      }, 3000);
     }
   };
 

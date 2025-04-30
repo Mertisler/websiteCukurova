@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 export default function UyeOl() {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ export default function UyeOl() {
     fakulte: '',
     bolum: '',
     sinif: '',
+    kulupTercih: 'baski-parmak',
     mesaj: ''
   });
   
@@ -32,29 +34,27 @@ export default function UyeOl() {
     setError('');
     
     try {
-      // API endpoint'i doğru şekilde ayarlayın
-      // const response = await fetch('/api/uyelik', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(formData),
-      // });
+      // API endpoint'ine başvuru gönderme
+      const response = await fetch('/api/uyelik-basvuru', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
       
-      // if (!response.ok) {
-      //   throw new Error('Form gönderilirken bir hata oluştu');
-      // }
+      const data = await response.json();
       
-      // Şimdilik sadece başarılı olduğunu varsayalım
-      // API hazır olduğunda yukarıdaki kodu aktifleştirebilirsiniz
-      setTimeout(() => {
-        setSubmitted(true);
-        setLoading(false);
-      }, 1000);
+      if (!response.ok) {
+        throw new Error(data.message || 'Başvuru gönderilirken bir hata oluştu.');
+      }
       
+      // Başarılı durumda
+      setSubmitted(true);
     } catch (err) {
       console.error('Form gönderme hatası:', err);
-      setError('Form gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+      setError(err.message || 'Form gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+    } finally {
       setLoading(false);
     }
   };
@@ -85,6 +85,7 @@ export default function UyeOl() {
             </div>
           </div>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -220,25 +221,41 @@ export default function UyeOl() {
                 </div>
               </div>
               
-              <div>
-                <label htmlFor="sinif" className="block text-amber-800 font-medium mb-1">Sınıf*</label>
-                <select
-                  id="sinif"
-                  name="sinif"
-                  value={formData.sinif}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-2 border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                >
-                  <option value="">Seçiniz</option>
-                  <option value="1">1. Sınıf</option>
-                  <option value="2">2. Sınıf</option>
-                  <option value="3">3. Sınıf</option>
-                  <option value="4">4. Sınıf</option>
-                  <option value="5+">5+ Sınıf</option>
-                  <option value="Yüksek Lisans">Yüksek Lisans</option>
-                  <option value="Doktora">Doktora</option>
-                </select>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="sinif" className="block text-amber-800 font-medium mb-1">Sınıf*</label>
+                  <select
+                    id="sinif"
+                    name="sinif"
+                    value={formData.sinif}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  >
+                    <option value="">Seçiniz</option>
+                    <option value="1">1. Sınıf</option>
+                    <option value="2">2. Sınıf</option>
+                    <option value="3">3. Sınıf</option>
+                    <option value="4">4. Sınıf</option>
+                    <option value="5+">5+ Sınıf</option>
+                    <option value="Yüksek Lisans">Yüksek Lisans</option>
+                    <option value="Doktora">Doktora</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label htmlFor="kulupTercih" className="block text-amber-800 font-medium mb-1">Kulüp*</label>
+                  <select
+                    id="kulupTercih"
+                    name="kulupTercih"
+                    value={formData.kulupTercih}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  >
+                    <option value="baski-parmak">BALİZ PARMAK KULÜBÜ</option>
+                  </select>
+                </div>
               </div>
               
               <div>
@@ -250,14 +267,15 @@ export default function UyeOl() {
                   onChange={handleChange}
                   rows="4"
                   className="w-full px-4 py-2 border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  placeholder="Kulübe katılma nedeninizi ve beklentilerinizi yazabilirsiniz..."
                 ></textarea>
               </div>
               
-              <div className="flex justify-center pt-4">
+              <div className="mt-4">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="inline-flex items-center justify-center bg-amber-600 hover:bg-amber-700 text-white font-medium py-3 px-8 rounded-lg transition-colors disabled:opacity-70"
+                  className={`${loading ? 'bg-amber-400 cursor-not-allowed' : 'bg-amber-500 hover:bg-amber-600'} w-full md:w-auto text-white font-bold py-3 px-8 rounded-lg transition-colors flex items-center justify-center`}
                 >
                   {loading ? (
                     <>
@@ -268,7 +286,7 @@ export default function UyeOl() {
                       Gönderiliyor...
                     </>
                   ) : (
-                    'Üyelik Başvurusu Yap'
+                    'Başvuruyu Gönder'
                   )}
                 </button>
               </div>
@@ -282,6 +300,8 @@ export default function UyeOl() {
           </div>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 } 

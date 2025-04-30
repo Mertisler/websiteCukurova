@@ -17,6 +17,8 @@ export default function IletisimPage() {
     success: false,
     message: ''
   });
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,7 +28,7 @@ export default function IletisimPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Form doğrulama
@@ -39,21 +41,53 @@ export default function IletisimPage() {
       return;
     }
     
-    // Gerçek uygulamada burada bir API çağrısı olurdu
-    // Şimdilik başarılı olduğunu varsayalım
-    setStatus({
-      submitted: true,
-      success: true,
-      message: 'Mesajınız başarıyla gönderildi. En kısa sürede size dönüş yapacağız.'
-    });
+    setIsSubmitting(true);
     
-    // Formu sıfırla
-    setFormData({
-      name: '',
-      email: '',
-      subject: '',
-      message: ''
-    });
+    try {
+      // API endpoint'ine e-posta göndermek için istek yap
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          to: 'islermert88@gmail.com' // E-postanın gönderileceği adres
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'E-posta gönderilirken bir hata oluştu.');
+      }
+      
+      // Başarılı durum
+      setStatus({
+        submitted: true,
+        success: true,
+        message: 'Mesajınız başarıyla gönderildi. En kısa sürede size dönüş yapacağız.'
+      });
+      
+      // Formu sıfırla
+      setFormData({
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+      });
+    } catch (error) {
+      console.error('İletişim formu hatası:', error);
+      
+      // Hata durumu
+      setStatus({
+        submitted: true,
+        success: false,
+        message: error.message || 'Bir hata oluştu. Lütfen daha sonra tekrar deneyin.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -198,9 +232,20 @@ export default function IletisimPage() {
                   
                   <button
                     type="submit"
-                    className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                    disabled={isSubmitting}
+                    className={`${isSubmitting ? 'bg-amber-400 cursor-not-allowed' : 'bg-amber-500 hover:bg-amber-600'} text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center justify-center`}
                   >
-                    Mesajı Gönder
+                    {isSubmitting ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Gönderiliyor...
+                      </>
+                    ) : (
+                      'Mesajı Gönder'
+                    )}
                   </button>
                 </form>
               </div>
