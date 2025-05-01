@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect , Suspense} from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './login.module.css';
 
-export default function AdminLogin() {
+const AdminLoginContent = () =>  {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -134,5 +134,13 @@ export default function AdminLogin() {
         </form>
       </div>
     </div>
+  );
+} 
+
+export default function AdminLogin(){
+  return (
+    <Suspense fallback={<div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-amber-500"></div>}>
+      <AdminLoginContent />
+    </Suspense>
   );
 } 
