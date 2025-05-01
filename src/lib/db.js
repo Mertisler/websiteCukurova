@@ -7,7 +7,11 @@ export const dbConfig = {
   user: 'u284653657_root',        // Sağlanan kullanıcı adı
   password: 'mertISLER123',       // Sağlanan şifre
   database: 'u284653657_balizparmak', // Sağlanan veritabanı adı
-  connectTimeout: 60000           // 60 saniye bağlantı zaman aşımı
+  connectTimeout: 120000,         // 120 saniye bağlantı zaman aşımı (artırıldı)
+  acquireTimeout: 60000,          // 60 saniye alma zaman aşımı
+  timeout: 60000,                 // 60 saniye genel zaman aşımı
+  enableKeepAlive: true,          // Bağlantıyı canlı tut
+  keepAliveInitialDelay: 10000    // 10 saniye başlangıç gecikmesi
 };
 
 // Bağlantı havuzu oluşturma
@@ -33,10 +37,12 @@ export const initializePool = () => {
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
-      connectTimeout: 60000,      // 60 saniye bağlantı zaman aşımı
+      connectTimeout: 120000,      // 120 saniye bağlantı zaman aşımı
+      acquireTimeout: 60000,       // 60 saniye alma zaman aşımı
+      timeout: 60000,              // 60 saniye genel zaman aşımı
       enableKeepAlive: true,
       keepAliveInitialDelay: 10000, // 10 saniye keepalive
-      trace: true                 // Bağlantı hatalarını izle
+      trace: true                   // Bağlantı hatalarını izle
     });
     
     console.log('MySQL bağlantı havuzu başlatıldı');
@@ -51,6 +57,33 @@ export const initializePool = () => {
     return null;
   }
 };
+
+/**
+ * Veritabanı bağlantısını test etme
+ * @returns {Promise<boolean>} - Bağlantı başarılı ise true, değilse false
+ */
+export async function testDatabaseConnection() {
+  try {
+    if (!pool) {
+      pool = initializePool();
+      if (!pool) {
+        throw new Error('Veritabanı bağlantı havuzu oluşturulamadı');
+      }
+    }
+
+    // Basit bir sorgu çalıştırarak bağlantıyı test et
+    const [rows] = await pool.execute('SELECT 1 as connection_test');
+    if (rows && rows.length > 0 && rows[0].connection_test === 1) {
+      console.log('Veritabanı bağlantı testi başarılı');
+      return true;
+    } else {
+      throw new Error('Veritabanı test sorgusu beklenmeyen sonuç döndürdü');
+    }
+  } catch (error) {
+    console.error('Veritabanı bağlantı testi başarısız:', error);
+    return false;
+  }
+}
 
 // Client tarafı kontrolü
 const isClient = typeof window !== 'undefined';
