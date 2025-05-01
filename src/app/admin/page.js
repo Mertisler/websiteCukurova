@@ -3,13 +3,14 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import LogoutButton from "../components/LogoutButton";
 
 // Admin bilgileri (gerçek uygulamada bu bilgiler güvenli bir şekilde saklanmalıdır)
 const ADMIN_USERNAME = "admin";
 const ADMIN_PASSWORD = "admin123";
 
 export default function AdminPage() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -28,8 +29,6 @@ export default function AdminPage() {
   const [imageUploading, setImageUploading] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem("adminAuth", "true");
-    fetchAnnouncements();
     checkDatabaseStatus();
   }, []);
 
@@ -77,24 +76,71 @@ export default function AdminPage() {
     }
   }, []);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
     
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      localStorage.setItem("adminAuth", "true");
-      setIsLoggedIn(true);
-      setError("");
-      fetchAnnouncements();
-    } else {
-      setError("Kullanıcı adı veya şifre hatalı!");
+    try {
+      // API ile giriş yap
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        },
+        body: JSON.stringify({ username, password }),
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setIsLoggedIn(true);
+        setError("");
+        fetchAnnouncements();
+      } else {
+        setError(data.message || "Kullanıcı adı veya şifre hatalı!");
+      }
+    } catch (error) {
+      console.error('Giriş hatası:', error);
+      setError("Giriş yapılırken bir hata oluştu. Lütfen tekrar deneyin.");
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("adminAuth");
-    setIsLoggedIn(false);
-    setUsername("");
-    setPassword("");
+  const handleLogout = async () => {
+    try {
+      console.log('Çıkış işlemi başlatılıyor...');
+      
+      // Çıkış API'sını çağır
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        // Tarayıcı önbelleğini temizle
+        localStorage.removeItem("adminAuth");
+        setIsLoggedIn(false);
+        setUsername("");
+        setPassword("");
+        
+        // Ana sayfaya yönlendir
+        window.location.href = data.redirectUrl || '/';
+      } else {
+        console.error('Çıkış işlemi başarısız:', data.message);
+        alert('Çıkış yapılırken bir hata oluştu. Lütfen tekrar deneyin.');
+      }
+    } catch (error) {
+      console.error('Çıkış hatası:', error);
+      alert('Çıkış yapılırken bir hata oluştu. Lütfen tekrar deneyin.');
+    }
   };
 
   const handleAnnouncementChange = (e) => {
@@ -548,12 +594,7 @@ export default function AdminPage() {
               <Link href="/admin/tablo-guncelle" className="bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-lg">
                 Tablo Güncelle
             </Link>
-            <button
-              onClick={handleLogout}
-              className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg"
-            >
-              Çıkış Yap
-            </button>
+            <LogoutButton />
           </div>
         </div>
         
@@ -778,15 +819,15 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-amber-50 to-amber-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-amber-100 to-amber-300 p-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow-xl overflow-hidden">
-        <div className="bg-amber-500 p-4 flex items-center justify-center">
-          <div className="w-12 h-12 mr-3">
+        <div className="bg-amber-500 p-6 flex items-center justify-center">
+          <div className="w-16 h-16 mr-3">
             <Image
               src="/honey-pot.svg"
               alt="Bal Küpü Logo"
-              width={48}
-              height={48}
+              width={64}
+              height={64}
               className="object-contain"
               onError={(e) => {
                 e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24' fill='none' stroke='%23FFC107' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 2v7.31'/%3E%3Cpath d='M14 9.3V2'/%3E%3Cpath d='M8.17 9.37a6 6 0 0 0-5.77 8.16A6 6 0 0 0 14 19.71'/%3E%3Cpath d='M21.6 17.53a6 6 0 0 0-5.77-8.16 5.88 5.88 0 0 0-1.77.27'/%3E%3Cpath d='M12.63 16.24c.98-.07 1.97.39 2.54 1.19.57.8.68 1.84.28 2.74'/%3E%3Cpath d='M15.5 14a2.12 2.12 0 0 1 .15 2.94 2.13 2.13 0 0 1-2.39.46'/%3E%3Cpath d='M10 2C5.58 2 2 5.58 2 10'/%3E%3C/svg%3E";
@@ -796,7 +837,12 @@ export default function AdminPage() {
           <h1 className="text-2xl font-bold text-white">Bal Küpü Admin</h1>
         </div>
         
-        <div className="p-6">
+        <div className="p-8">
+          <div className="bg-amber-50 border-l-4 border-amber-500 text-amber-700 p-4 mb-6 rounded" role="alert">
+            <p className="font-bold">Dikkat!</p>
+            <p>Bu sayfa sadece yöneticilere yöneliktir. Yetkisiz girişler engellenmektedir.</p>
+          </div>
+          
           <h2 className="text-2xl font-bold mb-6 text-amber-800 text-center">Yönetici Girişi</h2>
           
           {error && (
@@ -818,6 +864,7 @@ export default function AdminPage() {
                 className="w-full px-3 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                 placeholder="Kullanıcı adını giriniz"
                 required
+                autoComplete="off"
               />
             </div>
             
@@ -833,6 +880,7 @@ export default function AdminPage() {
                 className="w-full px-3 py-3 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                 placeholder="Şifrenizi giriniz"
                 required
+                autoComplete="new-password"
               />
             </div>
             
