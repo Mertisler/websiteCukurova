@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
+import { videosDb } from '@/lib/db';
 
 // Dosya yolu - hem geliştirme hem de prodüksiyon için çalışır
 const dataFilePath = path.join(process.cwd(), 'data', 'videos.json');
@@ -22,18 +22,13 @@ function ensureDirectoryExists(filePath) {
   }
 }
 
-// Videoları getirme
-function getVideos() {
+// Videoları veritabanından getirme
+async function getVideos() {
   try {
-    if (!fs.existsSync(dataFilePath)) {
-      console.log('Videos dosyası bulunamadı, yeni bir array döndürülüyor');
-      return [];
-    }
-    const data = fs.readFileSync(dataFilePath, 'utf8');
-    return JSON.parse(data);
+    const videos = await videosDb.getAllVideos();
+    return videos;
   } catch (error) {
-    console.error('Videolar okunurken hata oluştu:', error);
-    // Hata durumunda boş array döndür
+    console.error('Videolar veritabanından alınırken hata oluştu:', error);
     return [];
   }
 }
@@ -94,7 +89,7 @@ function normalizeVideoData(video) {
 export async function GET() {
   try {
     console.log('Video getirme isteği alındı');
-    const videos = getVideos();
+    const videos = await getVideos();
     console.log(`${videos.length} video bulundu`);
     
     // Her bir videoyu normalize et
@@ -129,6 +124,8 @@ export async function POST(request) {
     // video_url veya videoUrl olabilir, her ikisini de kontrol et
     const title = data.title;
     const videoUrl = data.videoUrl || data.video_url;
+    const description = data.description || "";
+    const thumbnail_url = data.thumbnail_url || "";
 
     if (!title || !videoUrl) {
       return NextResponse.json(
@@ -137,52 +134,30 @@ export async function POST(request) {
       );
     }
 
-    const videos = getVideos();
-    console.log(`Mevcut videolar: ${videos.length}`);
-    
-    // Normalize edilmiş video verisi oluştur
-    const normalizedData = normalizeVideoData(data);
-    
+    // VERİTABANI YAKLAŞIMINA GEÇİŞ - YENİ VİDEO OLUŞTUR
     const newVideo = {
-      id: data.id || Date.now().toString(), // UUID yerine timestamp kullan, daha kolay işlenir
       title,
-      videoUrl,
-      description: data.description || "",
-      thumbnail_url: data.thumbnail_url || "",
-      youtubeId: getYoutubeIdFromUrl(videoUrl),
-      date: data.date || new Date().toLocaleDateString('tr-TR'), 
+      description,
+      video_url: videoUrl,
+      thumbnail_url
     };
 
-    console.log('Eklenecek video:', newVideo);
-    videos.push(newVideo);
+    // VERİTABANINA KAYDET
+    const savedVideo = await videosDb.addVideo(newVideo);
     
-    // Vercel prodüksiyon ortamında ve geliştirme ortamında farklı davran
-    const saved = saveVideos(videos);
-    
-    if (saved) {
-      console.log('Video başarıyla eklendi, istemciye yanıt gönderiliyor');
+    if (savedVideo) {
+      console.log('Video başarıyla veritabanına eklendi');
       return NextResponse.json({ 
         success: true, 
-        video: newVideo,
-        message: 'Video başarıyla kaydedildi.'
+        video: savedVideo,
+        message: 'Video başarıyla veritabanına kaydedildi.'
       });
     } else {
-      console.error('Video kaydedilemedi. Ancak istemciye düzgün yanıt gönderilecek');
-      // Hata olsa bile istemciye başarılı yanıt dön (Vercel'de)
-      if (process.env.NODE_ENV === 'production') {
-        return NextResponse.json({ 
-          success: true, 
-          video: newVideo,
-          message: 'Video işlendi, ancak kalıcı depolama yapılamadı.',
-          warning: true
-        });
-      } else {
-        // Geliştirme ortamında gerçek hata döndür
-        return NextResponse.json(
-          { success: false, message: 'Video kaydedilemedi.' },
-          { status: 500 }
-        );
-      }
+      console.error('Video veritabanına kaydedilemedi');
+      return NextResponse.json(
+        { success: false, message: 'Video veritabanına kaydedilemedi.' },
+        { status: 500 }
+      );
     }
   } catch (error) {
     console.error('POST video hatası:', error);
@@ -209,46 +184,21 @@ export async function DELETE(request) {
       );
     }
 
-    let videos = getVideos();
-    const initialLength = videos.length;
-    console.log(`Silme öncesi video sayısı: ${initialLength}`);
+    // VERİTABANINDAN SİL
+    const result = await videosDb.deleteVideo(id);
     
-    // Silme işlemini gerçekleştir ve sonucu kontrol et
-    videos = videos.filter(v => String(v.id) !== String(id));
-    console.log(`Silme sonrası video sayısı: ${videos.length}`);
-
-    if (videos.length === initialLength) {
-      console.log('Video bulunamadı, ID:', id);
-      return NextResponse.json(
-        { success: false, message: 'Belirtilen ID ile bir video bulunamadı.' },
-        { status: 404 }
-      );
-    }
-
-    // Değişiklikleri kaydet
-    const saved = saveVideos(videos);
-    
-    if (saved) {
-      console.log('Video başarıyla silindi');
+    if (result) {
+      console.log('Video başarıyla veritabanından silindi');
       return NextResponse.json({ 
         success: true, 
         message: 'Video başarıyla silindi.' 
       });
     } else {
-      console.error('Video silme sırasında kaydetme hatası oluştu');
-      // Vercel prodüksiyon ortamında hata olsa bile başarılı kabul et
-      if (process.env.NODE_ENV === 'production') {
-        return NextResponse.json({ 
-          success: true, 
-          message: 'Video silindi, ancak kalıcı güncelleme yapılamadı.',
-          warning: true 
-        });
-      } else {
-        return NextResponse.json(
-          { success: false, message: 'Video silinirken bir hata oluştu.' },
-          { status: 500 }
-        );
-      }
+      console.error('Video silinirken hata oluştu');
+      return NextResponse.json(
+        { success: false, message: 'Video silinirken bir hata oluştu veya video bulunamadı.' },
+        { status: 404 }
+      );
     }
   } catch (error) {
     console.error('DELETE video hatası:', error);
@@ -258,4 +208,15 @@ export async function DELETE(request) {
       error: error.message 
     }, { status: 500 });
   }
-} 
+}
+
+// Yeni video ekleme
+async function addVideo(video) {
+  try {
+    const yeniVideo = await videosDb.addVideo(video);
+    return yeniVideo;
+  } catch (error) {
+    console.error('Video veritabanına eklenirken hata oluştu:', error);
+    return null;
+  }
+}

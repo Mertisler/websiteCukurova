@@ -167,6 +167,32 @@ export async function setupDatabase() {
   }
 }
 
+/**
+ * Videolar için veritabanı tablosunu oluşturma
+ */
+export async function setupVideosTable() {
+  try {
+    await executeQuery({
+      query: `
+        CREATE TABLE IF NOT EXISTS videos (
+          id BIGINT PRIMARY KEY AUTO_INCREMENT,
+          title VARCHAR(255) NOT NULL,
+          description TEXT,
+          video_url VARCHAR(255) NOT NULL,
+          thumbnail_url VARCHAR(255),
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )
+      `
+    });
+    console.log('Videolar tablosu başarıyla oluşturuldu');
+    return true;
+  } catch (error) {
+    console.error('Videolar tablosu oluşturulurken hata:', error);
+    return false;
+  }
+}
+
 // Duyuru ile ilgili veritabanı işlemleri
 export const announcementsDb = {
   // Tüm duyuruları getir
@@ -304,6 +330,89 @@ export const announcementsDb = {
         return false;
       }
       
+      throw error;
+    }
+  }
+};
+
+// Videolar ile ilgili veritabanı işlemleri
+export const videosDb = {
+  // Tüm videoları getir
+  getAllVideos: async () => {
+    try {
+      const results = await executeQuery({
+        query: 'SELECT * FROM videos ORDER BY created_at DESC'
+      });
+      return results;
+    } catch (error) {
+      console.error('Videolar alınırken hata:', error);
+      return [];
+    }
+  },
+  
+  // ID'ye göre video getir
+  getVideoById: async (id) => {
+    try {
+      const results = await executeQuery({
+        query: 'SELECT * FROM videos WHERE id = ?',
+        values: [id]
+      });
+      return results.length > 0 ? results[0] : null;
+    } catch (error) {
+      console.error('Video alınırken hata:', error);
+      return null;
+    }
+  },
+  
+  // Yeni video ekle
+  addVideo: async (video) => {
+    try {
+      const result = await executeQuery({
+        query: 'INSERT INTO videos (title, description, video_url, thumbnail_url) VALUES (?, ?, ?, ?)',
+        values: [
+          video.title,
+          video.description,
+          video.video_url,
+          video.thumbnail_url || null
+        ]
+      });
+      return { ...video, id: result.insertId };
+    } catch (error) {
+      console.error('Video eklenirken hata:', error);
+      throw error;
+    }
+  },
+  
+  // Video güncelle
+  updateVideo: async (id, updatedData) => {
+    try {
+      await executeQuery({
+        query: 'UPDATE videos SET title = ?, description = ?, video_url = ?, thumbnail_url = ? WHERE id = ?',
+        values: [
+          updatedData.title,
+          updatedData.description,
+          updatedData.video_url,
+          updatedData.thumbnail_url || null,
+          id
+        ]
+      });
+      return { ...updatedData, id };
+    } catch (error) {
+      console.error('Video güncellenirken hata:', error);
+      throw error;
+    }
+  },
+  
+  // Video sil
+  deleteVideo: async (id) => {
+    try {
+      const result = await executeQuery({
+        query: 'DELETE FROM videos WHERE id = ?',
+        values: [id]
+      });
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error('Video silinirken hata:', error);
       throw error;
     }
   }
