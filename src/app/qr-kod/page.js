@@ -72,7 +72,7 @@ const QrKodContent = () => {
         try {
           // QR kodun hedef URL'si
           const baseUrl = process.env.NODE_ENV === "production"
-            ? "https://www.balizparmak.com" // BURAYI kendi canlı domain adresinle değiştir
+            ? "https://www.balizparmak.com" // Canlı domain
             : "http://localhost:3001";
           const videoUrl = `${baseUrl}/kitap-oku-dinle?video=${secilenVideo.id}`;
           
@@ -120,6 +120,11 @@ const QrKodContent = () => {
     }
   };
   
+  // baseUrl'i component dışında da tanımla
+  const baseUrl = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+    ? 'https://www.balizparmak.com'
+    : 'http://localhost:3001';
+
   // Yükleniyor durumu
   if (loading) {
     return (
@@ -225,7 +230,7 @@ const QrKodContent = () => {
                     <span className="font-bold">Video:</span> {secilenVideo.title}
                   </p>
                   <p className="text-xs mt-1">
-                    <span className="font-bold">URL:</span> http://localhost:3001/kitap-oku-dinle?video={secilenVideo.id}
+                    <span className="font-bold">URL:</span> {baseUrl}/kitap-oku-dinle?video={secilenVideo.id}
                   </p>
                   <p className="text-xs mt-1 text-blue-500">
                     Not: Canlı sitede, gerçek site adresinizi kullanmalısınız
