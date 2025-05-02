@@ -117,6 +117,15 @@ const KitapOkuDinleContent = () => {
     );
   }
 
+  // Seçili video bul
+  const selectedVideo = selectedVideoId && videos.length > 0
+    ? videos.find(v => v.id.toString() === selectedVideoId)
+    : null;
+  // Diğer videolar (seçili video hariç)
+  const otherVideos = selectedVideo
+    ? videos.filter(v => v.id.toString() !== selectedVideoId)
+    : videos;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-amber-100">
       <Header />
@@ -133,52 +142,46 @@ const KitapOkuDinleContent = () => {
             </h1>
             
             {/* Seçili video büyük şekilde */}
-            {selectedVideoId && videos.length > 0 && (
-              (() => {
-                const selected = videos.find(v => v.id.toString() === selectedVideoId);
-                if (!selected) return null;
-                return (
-                  <div className="mb-10">
-                    <h2 className="text-2xl font-bold text-amber-700 mb-4">Seçili Video</h2>
-                    <div className="bg-amber-50 rounded-lg overflow-hidden shadow-md border border-amber-400 mb-6">
-                      <div className="relative pb-[56.25%] bg-amber-100">
-                        {selected.youtubeId ? (
-                          <iframe
-                            src={`https://www.youtube.com/embed/${selected.youtubeId}`}
-                            title={selected.title}
-                            className="absolute inset-0 w-full h-full"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          ></iframe>
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          </div>
-                        )}
+            {selectedVideo && (
+              <div className="mb-10">
+                <h2 className="text-2xl font-bold text-amber-700 mb-4">Seçili Video</h2>
+                <div className="bg-amber-50 rounded-lg overflow-hidden shadow-md border border-amber-400 mb-6">
+                  <div className="relative pb-[56.25%] bg-amber-100">
+                    {selectedVideo.youtubeId ? (
+                      <iframe
+                        src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}`}
+                        title={selectedVideo.title}
+                        className="absolute inset-0 w-full h-full"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                       </div>
-                      <div className="p-4">
-                        <h3 className="text-xl font-bold text-amber-800">{selected.title}</h3>
-                        {selected.description && (
-                          <p className="text-amber-700 mt-2">{selected.description}</p>
-                        )}
-                        <div className="mt-3 text-xs text-amber-600">{selected.date}</div>
-                      </div>
-                    </div>
+                    )}
                   </div>
-                );
-              })()
+                  <div className="p-4">
+                    <h3 className="text-xl font-bold text-amber-800">{selectedVideo.title}</h3>
+                    {selectedVideo.description && (
+                      <p className="text-amber-700 mt-2">{selectedVideo.description}</p>
+                    )}
+                    <div className="mt-3 text-xs text-amber-600">{selectedVideo.date}</div>
+                  </div>
+                </div>
+              </div>
             )}
             
             {/* Eğitim Videoları - Diğerleri küçük kartlar */}
-            {videos.length > 0 && (
+            {otherVideos.length > 0 && (
               <div className="mb-10">
                 <h2 className="text-2xl font-bold text-amber-700 mb-6">Eğitim Videoları</h2>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {videos.filter(video => !selectedVideoId || video.id.toString() !== selectedVideoId).map((video) => (
+                  {otherVideos.map((video) => (
                     <div key={video.id} className="bg-amber-50 rounded-lg overflow-hidden shadow-md border border-amber-200 transition-all hover:shadow-lg hover:-translate-y-1">
                       <div className="relative pb-[56.25%] bg-amber-100">
                         {video.youtubeId ? (
