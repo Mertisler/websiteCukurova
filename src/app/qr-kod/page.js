@@ -71,7 +71,10 @@ const QrKodContent = () => {
       const generateQR = async () => {
         try {
           // QR kodun hedef URL'si
-          const videoUrl = `http://localhost:3001/kitap-oku-dinle?video=${secilenVideo.id}`;
+          const baseUrl = process.env.NODE_ENV === "production"
+            ? "https://www.balizparmak.com" // BURAYI kendi canlı domain adresinle değiştir
+            : "http://localhost:3001";
+          const videoUrl = `${baseUrl}/kitap-oku-dinle?video=${secilenVideo.id}`;
           
           // Canvas QR kodu
           if (canvasRef.current) {

@@ -30,14 +30,18 @@ export default function AdminLayout({ children }) {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
             'Pragma': 'no-cache',
             'Expires': '0'
-          }
+          },
+          credentials: 'include' // Cookie'leri de gönder
         });
         
         const data = await response.json();
         
         // Eğer oturum yoksa login sayfasına yönlendir
         if (!data.authenticated) {
+          console.log('Admin layout: Oturum yok, giriş sayfasına yönlendiriliyor');
           router.push('/admin/login?redirect=' + pathname);
+        } else {
+          console.log('Admin layout: Oturum doğrulandı, sayfaya erişim izni verildi');
         }
       } catch (error) {
         console.error('Oturum kontrolü hatası:', error);

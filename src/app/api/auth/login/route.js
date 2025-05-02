@@ -24,18 +24,12 @@ export async function POST(request) {
       const token = generateToken();
       console.log('Giriş başarılı, token oluşturuldu');
       
-      // Önce eski cookie'yi sil (eğer varsa)
-      cookies().delete('admin_token', {
-        path: '/',
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production'
-      });
+      // Cookie'yi 24 saat geçerli olarak ayarla
+      const expiryDate = new Date();
+      expiryDate.setHours(expiryDate.getHours() + 24);
       
-      // Yeni cookie'yi ayarla - 24 saat geçerli olsun
       cookies().set('admin_token', token, {
-        expires: Date.now() + 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        expires: expiryDate,
         path: '/'
       });
 

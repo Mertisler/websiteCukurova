@@ -5,7 +5,7 @@ export async function POST() {
   try {
     console.log('Çıkış isteği alındı');
     
-    // Admin token'ı sil - cookie'nin tam olarak silindiğinden emin olalım
+    // Cookie işlemlerinde await yok!
     cookies().delete('admin_token', {
       path: '/', // Cookie'nin tüm path'lerde silinmesini sağlar
       secure: process.env.NODE_ENV === 'production',

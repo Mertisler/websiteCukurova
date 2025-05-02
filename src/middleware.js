@@ -5,19 +5,13 @@ export function middleware(request) {
 
   // Yönetici sayfaları için kontrol
   if (pathname.startsWith('/admin') || pathname.startsWith('/yonetim')) {
-    // Anti-cache başlıkları
-    const response = NextResponse.next();
-    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    response.headers.set('Pragma', 'no-cache');
-    response.headers.set('Expires', '0');
-
     // Giriş sayfasına erişim kontrolü atlanabilir
     if (pathname === '/admin/login' || pathname === '/yonetim/giris') {
-      return response;
+      return NextResponse.next();
     }
 
     // Admin token kontrolü
-    const adminToken = request.cookies.get('admin_token')?.value;
+    const adminToken = request.cookies.get('admin_token');
     
     // Token yoksa giriş sayfasına yönlendir
     if (!adminToken) {
@@ -26,7 +20,8 @@ export function middleware(request) {
       return NextResponse.redirect(url);
     }
     
-    return response;
+    // Token varsa devam et
+    return NextResponse.next();
   }
 
   return NextResponse.next();
