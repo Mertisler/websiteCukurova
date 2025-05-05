@@ -19,11 +19,6 @@ export default function AdminLayout({ children }) {
     // Her sayfa yüklendiğinde oturum kontrolü yap
     const checkSession = async () => {
       try {
-        // localStorage'da adminAuth varsa kaldır - eski otomatik giriş kalıntısı
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('adminAuth'); 
-        }
-        
         const response = await fetch('/api/auth/check-session', {
           method: 'GET',
           headers: {

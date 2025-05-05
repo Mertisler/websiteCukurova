@@ -27,7 +27,9 @@ export default function RootLayout({
       <head>
         <title>Baliz Parmak Topluluğu</title>
         <meta name="description" content="Baliz Parmak Topluluğu Resmi Web Sitesi" />
-        <link rel="icon" href="/honey-pot.svg" />
+        <link rel="icon" href="/favicon.ico" />
+        <meta property="og:image" content="/baliz.jpg" />
+        <meta name="twitter:image" content="/baliz.jpg" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

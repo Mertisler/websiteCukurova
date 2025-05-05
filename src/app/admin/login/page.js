@@ -73,7 +73,9 @@ const AdminLoginContent = () =>  {
 
       if (data.success) {
         // Başarılı giriş, yönlendir
-        router.push(redirect);
+        setTimeout(() => {
+          router.push(redirect);
+        }, 300); // 300ms gecikme
       } else {
         setError(data.message || 'Giriş yapılamadı. Lütfen bilgilerinizi kontrol edin.');
       }

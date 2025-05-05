@@ -26,7 +26,13 @@ export default function Home() {
         if (!response.ok) {
           // API çağrısı başarısız olursa localStorage'a düş
           if (localStorageAnnouncements) {
-            setAnnouncements(JSON.parse(localStorageAnnouncements));
+            const parsed = JSON.parse(localStorageAnnouncements);
+            if (parsed.length === 0) {
+              localStorage.removeItem("announcements");
+              setAnnouncements([]);
+            } else {
+              setAnnouncements(parsed);
+            }
             setError("");
           } else {
             setError("Duyurular yüklenirken bir hata oluştu");
@@ -42,7 +48,13 @@ export default function Home() {
           localStorage.setItem("announcements", JSON.stringify(data.announcements));
         } else if (localStorageAnnouncements) {
           // API'den veri gelmezse localStorage'a düş
-          setAnnouncements(JSON.parse(localStorageAnnouncements));
+          const parsed = JSON.parse(localStorageAnnouncements);
+          if (parsed.length === 0) {
+            localStorage.removeItem("announcements");
+            setAnnouncements([]);
+          } else {
+            setAnnouncements(parsed);
+          }
         } else {
           setAnnouncements([]);
         }
@@ -54,7 +66,13 @@ export default function Home() {
         // Hata durumunda localStorage'a düş
         const localStorageAnnouncements = localStorage.getItem("announcements");
         if (localStorageAnnouncements) {
-          setAnnouncements(JSON.parse(localStorageAnnouncements));
+          const parsed = JSON.parse(localStorageAnnouncements);
+          if (parsed.length === 0) {
+            localStorage.removeItem("announcements");
+            setAnnouncements([]);
+          } else {
+            setAnnouncements(parsed);
+          }
           setError("");
         } else {
           setError("Duyurular yüklenirken bir hata oluştu");
@@ -119,15 +137,7 @@ export default function Home() {
                 <div className="w-full h-64 md:h-80 relative bg-amber-100 rounded-lg overflow-hidden shadow-lg">
                   <div className="absolute inset-0 bg-amber-200 opacity-50 pattern-honeycomb pattern-amber-500 pattern-bg-transparent pattern-size-4"></div>
                   <div className="absolute inset-0 flex items-center justify-center p-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-32 w-32 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M10 2v7.31"></path>
-                      <path d="M14 9.3V2"></path>
-                      <path d="M8.17 9.37a6 6 0 0 0-5.77 8.16A6 6 0 0 0 14 19.71"></path>
-                      <path d="M21.6 17.53a6 6 0 0 0-5.77-8.16 5.88 5.88 0 0 0-1.77.27"></path>
-                      <path d="M12.63 16.24c.98-.07 1.97.39 2.54 1.19.57.8.68 1.84.28 2.74"></path>
-                      <path d="M15.5 14a2.12 2.12 0 0 1 .15 2.94 2.13 2.13 0 0 1-2.39.46"></path>
-                      <path d="M10 2C5.58 2 2 5.58 2 10"></path>
-                    </svg>
+                    <img src="/baliz.jpg" alt="Baliz Parmak Kulübü Logosu" className="h-32 w-32 object-contain rounded-lg shadow" />
                   </div>
                 </div>
                 <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-400 rounded-full shadow-lg flex items-center justify-center text-white font-bold">

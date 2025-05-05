@@ -28,6 +28,7 @@ export default function Announcements() {
             if (localAnnouncements && localAnnouncements.length > 0) {
               setAnnouncements(localAnnouncements);
             } else {
+              localStorage.removeItem('announcements');
               setAnnouncements([]);
             }
           } catch {

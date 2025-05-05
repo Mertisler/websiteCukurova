@@ -311,7 +311,11 @@ export default function AdminPage() {
           
           // JSON işleme hatası oluşursa, yerel silme işlemi yap
           const updatedAnnouncements = announcements.filter(a => a.id !== id);
-          localStorage.setItem("announcements", JSON.stringify(updatedAnnouncements));
+          if (updatedAnnouncements.length === 0) {
+            localStorage.removeItem("announcements");
+          } else {
+            localStorage.setItem("announcements", JSON.stringify(updatedAnnouncements));
+          }
           setAnnouncements(updatedAnnouncements);
           setStatusMessage({ message: "Duyuru yerel olarak silindi. Uzak sunucuyla iletişim kurulamadı.", isError: false });
           return;
@@ -323,7 +327,11 @@ export default function AdminPage() {
         
         // Duyuruyu listeden kaldır
         const updatedAnnouncements = announcements.filter(a => a.id !== id);
-        localStorage.setItem("announcements", JSON.stringify(updatedAnnouncements));
+        if (updatedAnnouncements.length === 0) {
+          localStorage.removeItem("announcements");
+        } else {
+          localStorage.setItem("announcements", JSON.stringify(updatedAnnouncements));
+        }
         setAnnouncements(updatedAnnouncements);
         setStatusMessage({ message: data.message || "Duyuru başarıyla silindi.", isError: false });
       } catch (error) {
@@ -331,7 +339,11 @@ export default function AdminPage() {
         
         // Hata durumunda da yerel silme işlemi yap
         const updatedAnnouncements = announcements.filter(a => a.id !== id);
-        localStorage.setItem("announcements", JSON.stringify(updatedAnnouncements));
+        if (updatedAnnouncements.length === 0) {
+          localStorage.removeItem("announcements");
+        } else {
+          localStorage.setItem("announcements", JSON.stringify(updatedAnnouncements));
+        }
         setAnnouncements(updatedAnnouncements);
         
         setStatusMessage({ 
@@ -447,79 +459,6 @@ export default function AdminPage() {
     }
   }, [setupDatabase, fetchAnnouncements]);
   
-  // Manuel senkronizasyon fonksiyonu
-  const manualSync = async () => {
-    try {
-      setSyncLoading(true);
-      
-      // Önce veritabanı durumunu kontrol et
-      const response = await fetch('/api/db-sync');
-      const data = await response.json();
-      
-      setDbStatus(data.dbStatus || "error");
-      
-      if (data.dbStatus !== "connected") {
-        setStatusMessage({
-          message: "Veritabanı bağlantısı kurulamadı. Senkronizasyon yapılamıyor.",
-          isError: true
-        });
-        return;
-      }
-      
-      // Yerel duyuruları al
-      const localAnnouncements = JSON.parse(localStorage.getItem("announcements") || "[]");
-      
-      if (localAnnouncements.length === 0) {
-        setStatusMessage({
-          message: "Senkronize edilecek yerel duyuru bulunmuyor.",
-          isError: false
-        });
-        return;
-      }
-      
-      // Senkronizasyon API'sini çağır
-      const syncResponse = await fetch('/api/db-sync', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          announcements: localAnnouncements
-        }),
-      });
-      
-      if (!syncResponse.ok) {
-        throw new Error('Senkronizasyon isteği başarısız oldu');
-      }
-      
-      const syncData = await syncResponse.json();
-      
-      setStatusMessage({
-        message: syncData.message || `${syncData.syncedCount} duyuru senkronize edildi.`,
-        isError: !syncData.success
-      });
-      
-      // Senkronizasyon başarılıysa duyuruları güncelleyin
-      if (syncData.success) {
-        fetchAnnouncements();
-      }
-      
-    } catch (error) {
-      console.error("Manuel senkronizasyon sırasında hata:", error);
-      setStatusMessage({
-        message: "Senkronizasyon sırasında bir hata oluştu: " + error.message,
-        isError: true
-      });
-    } finally {
-      setSyncLoading(false);
-      
-      // 5 saniye sonra durum mesajını temizle
-      setTimeout(() => {
-        setStatusMessage({ message: "", isError: false });
-      }, 5000);
-    }
-  };
-  
   // Veritabanı durumunu kontrol eden fonksiyon
   const checkDatabaseStatus = async () => {
     try {
@@ -577,27 +516,20 @@ export default function AdminPage() {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">BalİZ Parmak Kulübü Yönetim Paneli</h1>
-            <Link href="/" className="text-white hover:text-amber-200 transition-colors">
-              Siteye Dön
-            </Link>
+            <div className="flex gap-2">
+              <Link href="/admin/videos" className="bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-lg text-center">
+                Video Yönetimi
+              </Link>
+              <Link href="/" className="bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-lg text-center">
+                Siteye Dön
+              </Link>
+              <LogoutButton />
+            </div>
           </div>
         </div>
       </header>
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-bold text-amber-800">Ana Panel</h2>
-          <div className="flex space-x-4">
-            <Link href="/admin/videos" className="bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-lg">
-              Video Yönetimi
-            </Link>
-              <Link href="/admin/tablo-guncelle" className="bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-lg">
-                Tablo Güncelle
-            </Link>
-            <LogoutButton />
-          </div>
-        </div>
-        
+      <main className="container max-w-full sm:max-w-3xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
         {statusMessage.message && (
           <div className={`${
             statusMessage.isError 
@@ -608,66 +540,7 @@ export default function AdminPage() {
           </div>
         )}
         
-        {/* Veritabanı Durumu ve Senkronizasyon Butonu */}
-        <div className="bg-white p-4 rounded shadow mb-6">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <span className="mr-2">Veritabanı Durumu:</span>
-              {dbStatus === "connected" && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                  <span className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>
-                  Bağlı
-                </span>
-              )}
-              {dbStatus === "disconnected" && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                  <span className="w-2 h-2 bg-red-500 rounded-full mr-1.5"></span>
-                  Bağlantı Yok
-                </span>
-              )}
-              {dbStatus === "error" && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                  <span className="w-2 h-2 bg-red-500 rounded-full mr-1.5"></span>
-                  Hata
-                </span>
-              )}
-              {dbStatus === "unknown" && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                  <span className="w-2 h-2 bg-gray-500 rounded-full mr-1.5"></span>
-                  Bilinmiyor
-                </span>
-              )}
-            </div>
-            
-            <div className="flex space-x-2">
-              <button
-                onClick={setupDatabase}
-                disabled={setupLoading}
-                className="bg-purple-500 hover:bg-purple-600 text-white py-1 px-3 rounded shadow text-sm disabled:opacity-50"
-              >
-                {setupLoading ? "Kuruluyor..." : "Veritabanı Kur"}
-              </button>
-              
-              <button
-                onClick={checkDatabaseStatus}
-                disabled={syncLoading || setupLoading}
-                className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded shadow text-sm disabled:opacity-50"
-              >
-                {syncLoading ? "Kontrol Ediliyor..." : "Durumu Kontrol Et"}
-              </button>
-              
-              <button
-                onClick={manualSync}
-                disabled={syncLoading || setupLoading || dbStatus !== "connected"}
-                className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded shadow text-sm disabled:opacity-50"
-              >
-                {syncLoading ? "Senkronize Ediliyor..." : "Manuel Senkronizasyon"}
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
             <div className="bg-amber-500 px-6 py-4">
               <h2 className="text-xl font-bold text-white">Yeni Duyuru Ekle</h2>
@@ -804,6 +677,40 @@ export default function AdminPage() {
               )}
             </div>
           </div>
+        </div>
+        
+        {/* Veritabanı Durumu */}
+        <div className="bg-white p-4 rounded shadow mb-6">
+          <div className="flex items-center">
+            <span className="mr-2">Veritabanı Durumu:</span>
+            {dbStatus === "connected" && (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>
+                Bağlı
+              </span>
+            )}
+            {dbStatus === "disconnected" && (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                <span className="w-2 h-2 bg-red-500 rounded-full mr-1.5"></span>
+                Bağlantı Yok
+              </span>
+            )}
+            {dbStatus === "error" && (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                <span className="w-2 h-2 bg-red-500 rounded-full mr-1.5"></span>
+                Hata
+              </span>
+            )}
+            {dbStatus === "unknown" && (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                <span className="w-2 h-2 bg-gray-500 rounded-full mr-1.5"></span>
+                Bilinmiyor
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4 sm:gap-0">
+          <h2 className="text-2xl sm:text-3xl font-bold text-amber-800">Ana Panel</h2>
         </div>
       </main>
       
