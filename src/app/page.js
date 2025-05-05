@@ -134,10 +134,10 @@ export default function Home() {
               </div>
               
               <div className="md:w-1/2 relative">
-                <div className="w-full h-64 md:h-80 relative bg-amber-100 rounded-lg overflow-hidden shadow-lg">
+                <div className="w-full h-64 md:h-80 relative bg-amber-100 rounded-lg overflow-hidden shadow-lg flex items-center justify-center p-4">
                   <div className="absolute inset-0 bg-amber-200 opacity-50 pattern-honeycomb pattern-amber-500 pattern-bg-transparent pattern-size-4"></div>
                   <div className="absolute inset-0 flex items-center justify-center p-6">
-                    <img src="/baliz.jpg" alt="Baliz Parmak Kulübü Logosu" className="h-32 w-32 object-contain rounded-lg shadow" />
+                    <img src="/baliz.jpg" alt="Baliz Parmak Kulübü Logosu" className="w-full max-w-xs h-32 md:h-48 object-contain rounded-lg shadow mx-auto block" />
                   </div>
                 </div>
                 <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-400 rounded-full shadow-lg flex items-center justify-center text-white font-bold">
@@ -267,6 +267,12 @@ export default function Home() {
                   <svg className="h-5 w-5 mr-2 text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
+                  Erişilebilir gezi ve eğlence etkinlikleri
+                </li>
+                <li className="flex items-center">
+                  <svg className="h-5 w-5 mr-2 text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
                   İşaret dili eğitim programları
                 </li>
                 <li className="flex items-center">
@@ -280,12 +286,6 @@ export default function Home() {
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
                   Sosyal entegrasyon etkinlikleri
-                </li>
-                <li className="flex items-center">
-                  <svg className="h-5 w-5 mr-2 text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Erişilebilir gezi ve eğlence etkinlikleri
                 </li>
               </ul>
             </div>
