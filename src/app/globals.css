@@ -24,3 +24,41 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 1s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes bounceGlow {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7);
+  }
+  20% {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 0 16px 4px rgba(251, 191, 36, 0.5);
+  }
+  50% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 0 32px 8px rgba(251, 191, 36, 0.7);
+  }
+  80% {
+    transform: translateY(8px) scale(0.98);
+    box-shadow: 0 0 16px 4px rgba(251, 191, 36, 0.5);
+  }
+}
+
+.animate-bounce-glow {
+  animation: bounceGlow 2s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}

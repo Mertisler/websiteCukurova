@@ -219,6 +219,21 @@ const KitapOkuDinleContent = () => {
               BalİZ Parmak Kulübü olarak okuma ve dinleme etkinliklerimiz ile bilgi ve ilham kaynağı olmayı hedefliyoruz.
               Aşağıda kulüp üyelerimiz için hazırladığımız kitap önerilerini bulabilirsiniz.
             </p>
+            {/* PDF Açıklama Kutusu */}
+            <div className="mb-4 p-4 bg-amber-100 rounded text-amber-900 font-semibold animate-fade-in-up shadow-md">
+              Türkiye'de ilk ve tek: Hem görme engelliler için Braille alfabesiyle, hem de normal Latin harfleriyle basılan ve ayrıca sesli destek sunan bir dergi çıkardık. Bu özellikleriyle Türkiye'de bir ilk olma özelliği taşıyor.
+            </div>
+            {/* PDF İndirme Linki */}
+            <div className="mb-8 animate-fade-in-up">
+              <a
+                href="https://drive.google.com/uc?export=download&id=1UXX-0TOcdPk6fax0oVXGnP4_o7P5sjT8"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-amber-500 hover:bg-amber-600 text-white font-medium py-2 px-4 rounded transition-colors shadow-md animate-bounce-glow"
+              >
+                Baliz Macera PDF'yi indir
+              </a>
+            </div>
             
             {/* Kitap Önerileri */}
             <div>
