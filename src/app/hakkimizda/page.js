@@ -21,7 +21,7 @@ export default function HakkimizdaPage() {
               <div>
                 <h2 className="text-xl font-bold text-amber-700 mb-4">Biz Kimiz?</h2>
                 <p className="text-amber-700 mb-4">
-                  Bal Küpü Duyuru Sistemi, 2023 yılında kurulmuş olup, kurumların ve toplulukların duyurularını kolayca paylaşabilmesi 
+                  Bal Küpü Duyuru Sistemi, 2025 yılında kurulmuş olup, kurumların ve toplulukların duyurularını kolayca paylaşabilmesi 
                   için tasarlanmış bir platformdur. Tıpkı bal arılarının özverili çalışması gibi, biz de kullanıcılarımıza en tatlı 
                   deneyimi sunmak için çalışıyoruz.
                 </p>
