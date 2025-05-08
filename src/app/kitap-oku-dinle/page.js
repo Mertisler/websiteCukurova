@@ -87,23 +87,23 @@ const KitapOkuDinleContent = () => {
   const kitaplar = [
     {
       id: 1,
-      baslik: "İşaret Dili ve Beden Dili",
-      yazar: "Aylin Sönmez",
-      aciklama: "İşaret dili ve beden dili hakkında temel bilgiler içeren interaktif bir kitap.",
+      baslik: "Körlük",
+      yazar: "Jose Saramago",
+      aciklama: "Toplumsal çöküş ve insan doğası üzerine çarpıcı bir roman.",
       gorsel: "/placeholder-image.png"
     },
     {
       id: 2,
-      baslik: "Engelsiz Yaşam",
-      yazar: "Mehmet Yılmaz",
-      aciklama: "Engelsiz bir dünya için bilinçlendirme ve farkındalık kitabı.",
+      baslik: "Empati",
+      yazar: "Adam Fawer",
+      aciklama: "İnsan zihninin sınırlarını ve empati gücünü sorgulatan sürükleyici bir roman.",
       gorsel: "/placeholder-image.png"
     },
     {
       id: 3,
-      baslik: "Bal ve Arı: İletişimin Gücü",
-      yazar: "Zeynep Kaya",
-      aciklama: "Etkili iletişim kurma sanatını arıların işbirliğinden öğreniyoruz.",
+      baslik: "Zorba",
+      yazar: "Nikos Kazancakis",
+      aciklama: "Hayatın anlamı, özgürlük ve dostluk üzerine unutulmaz bir başyapıt.",
       gorsel: "/placeholder-image.png"
     }
   ];

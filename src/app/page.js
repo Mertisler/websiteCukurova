@@ -414,6 +414,58 @@ export default function Home() {
           </div>
         </section>
         
+        {/* Kitap Önerileri */}
+        <section className="mb-16">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-amber-800 inline-block relative">
+              <span className="relative z-10">Kitap Önerileri</span>
+              <span className="absolute bottom-1 left-0 w-full h-3 bg-amber-300 opacity-50 z-0"></span>
+            </h2>
+            <p className="text-amber-700 mt-2">Kulübümüzün ilham veren kitap önerileri</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* 1. Kitap */}
+            <div className="bg-amber-100 rounded-lg shadow-md overflow-hidden border border-amber-100">
+              <div className="h-48 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <div className="bg-amber-50 p-6">
+                <h3 className="text-lg font-bold text-amber-800 mb-1">Körlük</h3>
+                <p className="text-amber-700 text-sm mb-2">Yazar: Jose Saramago</p>
+                <p className="text-amber-700 text-sm">Toplumsal çöküş ve insan doğası üzerine çarpıcı bir roman.</p>
+              </div>
+            </div>
+            {/* 2. Kitap */}
+            <div className="bg-amber-100 rounded-lg shadow-md overflow-hidden border border-amber-100">
+              <div className="h-48 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <div className="bg-amber-50 p-6">
+                <h3 className="text-lg font-bold text-amber-800 mb-1">Empati</h3>
+                <p className="text-amber-700 text-sm mb-2">Yazar: Adam Fawer</p>
+                <p className="text-amber-700 text-sm">İnsan zihninin sınırlarını ve empati gücünü sorgulatan sürükleyici bir roman.</p>
+              </div>
+            </div>
+            {/* 3. Kitap */}
+            <div className="bg-amber-100 rounded-lg shadow-md overflow-hidden border border-amber-100">
+              <div className="h-48 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <div className="bg-amber-50 p-6">
+                <h3 className="text-lg font-bold text-amber-800 mb-1">Zorba</h3>
+                <p className="text-amber-700 text-sm mb-2">Yazar: Nikos Kazancakis</p>
+                <p className="text-amber-700 text-sm">Hayatın anlamı, özgürlük ve dostluk üzerine unutulmaz bir başyapıt.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        
         {/* İstatistikler */}
         <section className="py-12 bg-amber-600 text-white rounded-xl shadow-lg mb-16 relative overflow-hidden">
           <div className="absolute inset-0 opacity-10 pattern-honeycomb pattern-white pattern-bg-transparent pattern-size-6"></div>
