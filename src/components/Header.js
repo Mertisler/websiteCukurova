@@ -109,6 +109,14 @@ export default function Header() {
                 </li>
                 <li>
                   <Link 
+                    href="/yonetim" 
+                    className="text-white hover:text-amber-200 font-medium transition-colors"
+                  >
+                    Yönetim Kadromuz
+                  </Link>
+                </li>
+                <li>
+                  <Link 
                     href="/admin" 
                     className="bg-amber-600 hover:bg-amber-700 text-white font-medium py-1 px-3 rounded-lg transition-colors"
                   >
@@ -158,6 +166,15 @@ export default function Header() {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Hakkımızda
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/yonetim" 
+                  className="block px-4 py-2 text-white hover:bg-amber-700 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Yönetim Kadromuz
                 </Link>
               </li>
               <li>
