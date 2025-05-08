@@ -3,10 +3,10 @@ import { NextResponse } from 'next/server';
 export function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // Yönetici sayfaları için kontrol
-  if (pathname.startsWith('/admin') || pathname.startsWith('/yonetim')) {
+  // Sadece yönetici sayfaları için kontrol
+  if (pathname.startsWith('/admin')) {
     // Giriş sayfasına erişim kontrolü atlanabilir
-    if (pathname === '/admin/login' || pathname === '/yonetim/giris') {
+    if (pathname === '/admin/login') {
       return NextResponse.next();
     }
 
@@ -29,5 +29,5 @@ export function middleware(request) {
 
 // Middleware'in çalışacağı path'leri belirleyelim
 export const config = {
-  matcher: ['/admin/:path*', '/yonetim/:path*']
+  matcher: ['/admin/:path*']
 }; 

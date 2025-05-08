@@ -28,7 +28,6 @@ export default function RootLayout({
         <title>Baliz Parmak Topluluğu</title>
         <meta name="description" content="Baliz Parmak Topluluğu Resmi Web Sitesi" />
         <link rel="icon" href="/favicon.ico" />
-        <link rel="icon" type="image/jpeg" href="/baliz.jpg" />
         <meta property="og:image" content="/baliz.jpg" />
         <meta name="twitter:image" content="/baliz.jpg" />
       </head>

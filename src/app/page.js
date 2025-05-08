@@ -118,7 +118,7 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col md:flex-row gap-8 items-center">
-              <div className="md:w-1/2">
+              <div className="w-full md:w-1/2">
                 <h3 className="text-xl font-bold text-amber-700 mb-3">Vizyonumuz</h3>
                 <p className="text-gray-700 mb-6 italic border-l-4 border-amber-500 pl-4 py-2">
                   &quot;Herkesin potansiyelini istediği şekilde gerçekleştirebildiği; engellerin değil, hayallerin konuşulduğu bir birliktelik oluşturmaktır.&quot;
@@ -133,16 +133,16 @@ export default function Home() {
                 </p>
               </div>
               
-              <div className="md:w-1/2 relative">
-                <div className="w-full h-64 md:h-80 relative bg-amber-100 rounded-lg overflow-hidden shadow-lg flex items-center justify-center p-4">
+              <div className="w-full md:w-1/2 relative mt-8 md:mt-0">
+                <div className="w-full h-48 sm:h-64 md:h-80 relative bg-amber-100 rounded-lg overflow-hidden shadow-lg flex items-center justify-center p-4">
                   <div className="absolute inset-0 bg-amber-200 opacity-50 pattern-honeycomb pattern-amber-500 pattern-bg-transparent pattern-size-4"></div>
-                  <div className="absolute inset-0 flex items-center justify-center p-6">
-                    <img src="/baliz.jpg" alt="Baliz Parmak Kulübü Logosu" className="w-full max-w-xs h-32 md:h-48 object-contain rounded-lg shadow mx-auto block" />
+                  <div className="absolute inset-0 flex items-center justify-center p-2 sm:p-6">
+                    <img src="/baliz.jpg" alt="Baliz Parmak Kulübü Logosu" className="w-full max-w-xs h-32 sm:h-40 md:h-48 object-contain rounded-lg shadow mx-auto block" />
                   </div>
                 </div>
-                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-400 rounded-full shadow-lg flex items-center justify-center text-white font-bold">
+                <div className="absolute right-2 bottom-2 md:-right-4 md:-bottom-4 w-20 h-20 md:w-24 md:h-24 bg-amber-400 rounded-full shadow-lg flex items-center justify-center text-white font-bold">
                   <div className="text-center">
-                    <div className="text-sm">BalİZ</div>
+                    <div className="text-xs sm:text-sm">BalİZ</div>
                     <div className="text-xs">Parmak</div>
                   </div>
                 </div>
