@@ -226,7 +226,7 @@ const KitapOkuDinleContent = () => {
             {/* PDF İndirme Linki */}
             <div className="mb-8 animate-fade-in-up">
               <a
-                href="https://drive.google.com/uc?export=download&id=1UXX-0TOcdPk6fax0oVXGnP4_o7P5sjT8"
+                href="https://linktr.ee/balizparmak.01"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block bg-amber-500 hover:bg-amber-600 text-white font-medium py-2 px-4 rounded transition-colors shadow-md animate-bounce-glow"
